@@ -18,6 +18,6 @@ app.configure(function(){
     app.use(express.static("public")); 
 });
 
-server.listen(port, function () {
+server.listen(port, host, function () {
   console.log("Anomaly game server listening at http://%s:%s", host, port);
 });
