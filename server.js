@@ -13,6 +13,11 @@ var express = require('express')
 var app = express();
 var server = http.Server(app);
 
+app.configure(function(){
+    //set static directory
+    app.use(express.static("public")); 
+});
+
 server.listen(port, function () {
   console.log("Anomaly game server listening at http://%s:%s", host, port);
 });

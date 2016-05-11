@@ -1,0 +1,27 @@
+.Info {
+    height:48%;
+    overflow-y:scroll;
+
+    border:2px;
+    border-style:solid;
+
+    padding: 8px;
+    margin-bottom:10px;
+}
+
+#SelectionInfo div {
+    margin-bottom:20px;
+}
+
+#SelectionInfo .Button {
+    margin-right:4px;
+}
+
+
+#SystemsText div {
+    float:left;
+}
+
+#RegionsText div {
+    float:left;
+}

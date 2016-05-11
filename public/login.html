@@ -1,0 +1,48 @@
+<html>
+
+<head>
+  <title>Login - Button Based Pen And Paper Games</title>
+
+  <link rel="stylesheet" type="text/css" href="css/base.css" />
+  <link rel="stylesheet" type="text/css" href="css/login.css" />
+
+  <script>
+    window.onload = function() {
+        document.getElementById("show_button").onclick = function(){
+            
+            if (document.getElementById("pass").type == "password") {
+                document.getElementById("pass").type = "text";
+                document.getElementById("show_button").text = "hide";
+            } else {
+                document.getElementById("pass").type = "password";
+                document.getElementById("show_button").text = "show";
+            }
+        }
+    }
+  </script>
+  
+</head>
+
+<body>
+    <div id="LoginBox">
+        <form action="/login" method="post">      
+          <ul>
+            <li>
+              <lable>Nickname:</lable> 
+              <input type="text" name="nick"></input>
+            </li>
+            <li>
+              <lable>Password:</lable> 
+              <input type="password" id="pass" name="pass"></input> 
+              <button id="show_button" type="button">show</button>
+            </li>
+            <li><input type="submit" value="Login/Register" /></li>
+          </ul>
+        </form>
+              
+        <p>Enter Nickname and password above. If the nickname is new it will be created. </p>
+        <p>WARNING: Email is not required, but without one your account password will not be retrivable if forgotten. You can attach an email in the account section.</p>
+
+    </div>
+</body>
+</html>

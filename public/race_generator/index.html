@@ -1,0 +1,45 @@
+<html>
+
+<head>
+  <title>Anomaly Race Creator - Button Based Pen And Paper Games</title>
+
+  <link rel="stylesheet" type="text/css" href="/css/base.css" />
+  <link rel="stylesheet" type="text/css" href="/css/buttons.css" />
+  <link rel="stylesheet" type="text/css" href="/css/columns.css" />
+  <link rel="stylesheet" type="text/css" href="race_generator.css" />
+
+  <script src="/scripts/jquery.js"></script>
+  <script src="/scripts/button_api.js"></script>
+  <script src="data.js"></script>
+  <script src="race_generator.js"></script>
+</head>
+
+<body>
+  <div class="ColumnFourth">
+      <div id="Filters" class="ButtonList"><h4>Filters</h4></div>
+      <div id="Sort Order" class="ButtonList"><h4>Sorting</h4></div>
+  </div>
+  <div id="BioParts" class="ColumnFourth ButtonList"><h4>Biological Parts</h4></div>
+  <div class="ColumnHalf">
+      <div id="SelectionInfo" class="Info">
+          <h4>Part Information (hover parts button to display)</h4>
+
+          <lable>Name: </lable><div id="NameText"></div>
+
+          <lable>Apearence: </lable><div id="ApearenceText"></div>
+
+          <lable>Function: </lable><div id="FunctionText"></div>
+
+          <lable>Body Regions: </lable><div id="RegionsText"></div>
+
+          <lable>Systems: </lable><div id="SystemsText"></div>
+
+      </div>
+
+      <div id="RaceSummery" class="Info">
+      
+      </div>
+  </div>
+</body>
+
+</html>
