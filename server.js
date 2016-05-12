@@ -13,6 +13,10 @@ var express = require('express')
 var app = express();
 var server = http.Server(app);
 
+//Project code setup
+//require("./code/passport_login.js")(app);
+require("./code/race_generator.js").RG();
+
 app.configure(function(){
     //set static directory
     app.use(express.static("public")); 
