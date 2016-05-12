@@ -71,7 +71,7 @@ $(window).load(function() {
     //show everything. clears some other filter
     var show_all_filter = function(){
         $("#BioParts .Button").show();
-        $('#RegionSelect').val("None");
+        $('#RegionSelect').val("all");
     }
 
     //show only selected parts
