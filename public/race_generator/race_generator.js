@@ -71,6 +71,7 @@ $(window).load(function() {
     //show everything. clears some other filter
     var show_all_filter = function(){
         $("#BioParts .Button").show();
+        $('#RegionSelect').val("None");
     }
 
     //show only selected parts
@@ -94,12 +95,33 @@ $(window).load(function() {
     var filter_buttons = [
      { "id": "AllFilter", "text": "Show All", "onclick":show_all_filter}
     ,{ "id": "SelectedFilter", "text": "Show Selected", "onclick":selected_filter}
-    ];
+    ];  
 
-    //set up region filter buttons
-    for (region in race_bio_regions) {
-        
-    }
+    button_ui.addButtonsToElement("FilterButtons", filter_buttons);
 
-    button_ui.addButtonsToElement("Filters", filter_buttons);
+    //set up dropdown menu region filter
+    $.each(race_bio_regions, function(key, value) {   
+     $('#RegionSelect')
+         .append($("<option></option>")
+                    .attr("value",key)
+                    .text(capitalizeEachWord(key))); 
+    });
+
+    $("#RegionSelect").change(function(){
+        var region = $("#RegionSelect").val();
+
+        $("#BioParts .Button").hide();
+        console.log(race_bio_regions[region])
+        $.each($("#BioParts .Button"), function() {
+            var bio_part = $(this);
+            
+            for (requested_part in race_bio_regions[region]) {
+                requested_part = race_bio_regions[region][requested_part];
+
+                if(requested_part == bio_part.attr("internal_id")) {
+                    bio_part.show();
+                }
+            }
+        });        
+    });
 });

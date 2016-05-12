@@ -16,12 +16,23 @@
 
 <body>
   <div class="ColumnFourth">
-      <div id="Filters" class="ButtonList"><h4>Filters</h4></div>
-      <div id="Sort Order" class="ButtonList"><h4>Sorting</h4></div>
+      <div id="Filters"class="Section">
+          <h4>Filters</h4>
+
+          <lable>Filter by Region: </lable>
+          <select id="RegionSelect"><option value="None">None</option></select>
+
+
+          <div id="FilterButtons"class="ButtonList"></div>
+      </div>
+      <div class="Section">
+          <h4>Sorting</h4>
+          <div id="Sort Order" class="ButtonList"></div>
+      </div>
   </div>
-  <div id="BioParts" class="ColumnFourth ButtonList"><h4>Biological Parts</h4></div>
+  <div id="BioParts" class="ColumnFourth ButtonList Section"><h4>Biological Parts</h4></div>
   <div class="ColumnHalf">
-      <div id="SelectionInfo" class="Info">
+      <div id="SelectionInfo" class="Info Section">
           <h4>Part Information (hover parts button to display)</h4>
 
           <lable>Name: </lable><div id="NameText"></div>
@@ -30,13 +41,13 @@
 
           <lable>Function: </lable><div id="FunctionText"></div>
 
-          <lable>Body Regions: </lable><div id="RegionsText"></div>
+          <lable>Body Regions: </lable><div id="RegionsText"></div> test
 
           <lable>Systems: </lable><div id="SystemsText"></div>
 
       </div>
 
-      <div id="RaceSummery" class="Info">
+      <div id="RaceSummery" class="Info Section">
       
       </div>
   </div>

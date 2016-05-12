@@ -1,9 +1,5 @@
 .Info {
     height:48%;
-    overflow-y:scroll;
-
-    border:2px;
-    border-style:solid;
 
     padding: 8px;
     margin-bottom:10px;
@@ -20,8 +16,15 @@
 
 #SystemsText div {
     float:left;
+    margin-bottom:20px;
 }
 
 #RegionsText div {
     float:left;
 }
+
+#Filters {
+    height:60%
+}
+
+
