@@ -1,13 +1,13 @@
 div.ColumnFourth {
   width: 20%;
   float: left;
-  height: 97%;
+  height: auto;
   margin-left: 10px;
 }
 
 div.ColumnHalf {
   width: 50%;
   float: left;
-  height: 97%;
+  height: auto;
   margin-left: 10px;
 }

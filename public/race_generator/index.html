@@ -41,14 +41,32 @@
 
           <lable>Function: </lable><div id="FunctionText"></div>
 
-          <lable>Body Regions: </lable><div id="RegionsText"></div> test
+          <ul id="errormsg"></ul>
+          <button id="addRacePart" type="button">Add Part</button>
 
-          <lable>Systems: </lable><div id="SystemsText"></div>
+          <div style="height=20px">
+              <div class="ColumnFourth">
+                  <lable>Body Regions: </lable><div id="RegionsText"></div>
+              </div>
 
+              <div class="ColumnHalf"><p>Systems: </p><div id="SystemsText"></div></div>
+
+              <div class="ColumnFourth">
+                  <lable>Functional Type: </lable><div id="FunctionType"></div>
+              </div>
+          </div>
+
+          
       </div>
 
       <div id="RaceSummery" class="Info Section">
-      
+          <div><label>Race URL (to save configuration):</label> <input type="text"></input></div>
+          <div><label>Race name:</label> <input type="text"></input></div>
+          <div>
+              <p>Race Parts</p>
+              <div id="racePartBuildLeft" class="ColumnHalf"><ul></ul></div>
+              <div id="racePartBuildRight" class="ColumnHalf"><ul></ul></div>
+          </div>
       </div>
   </div>
 </body>

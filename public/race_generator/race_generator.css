@@ -1,3 +1,15 @@
+/*we want to keep eveything on one page so we do a genaeral limit on divs*/
+div {
+    max-height:98%;
+}
+
+
+lable {
+    float:clear;
+ 
+    margin:10px;
+}
+
 .Info {
     height:48%;
 
@@ -13,18 +25,48 @@
     margin-right:4px;
 }
 
-
-#SystemsText div {
-    float:left;
-    margin-bottom:20px;
+#RaceSummery div {
+  margin-bottom: 10px;
 }
 
-#RegionsText div {
-    float:left;
-}
 
 #Filters {
     height:60%
 }
 
 
+
+
+#RegionsText {
+    float:left;
+}
+
+#SystemsText {
+    float:left;
+    margin-bottom:20px;
+
+}
+
+
+#FunctionType {
+    float:left;
+    margin-bottom:20px;
+
+}
+
+
+
+#racePartBuildRight {
+    width:44%;
+}
+
+#racePartBuildLeft {
+    width:44%;
+}
+
+#addRacePart {
+    font-size: 20px;
+    width:90%;
+    height: 30px;
+    margin-bottom:20px;
+}
