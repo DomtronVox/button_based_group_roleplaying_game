@@ -157,6 +157,11 @@ $(window).load(function() {
 
     //Final part is to setup the Race Summery section 
 
+    //delete the section_onclcik
+    var delete_onclick = function(){
+        $(this).remove()
+    }
+
     //attach an event to add the selected part
     $("#addRacePart").click(function() {
         //reset any error messages
@@ -179,10 +184,11 @@ $(window).load(function() {
         //get region the part belongs to and add it to that region in the race summery
         var region = $("#RegionsText .Selected").attr("internal_id").replace("Add", "");
         $("#RaceSummery"+capitalizeEachWord(region)).append("<li>"+part_text+"</li>");
+        $("#RaceSummery"+capitalizeEachWord(region)+" li").click(delete_onclick);
 
     });
 
-    //add the Race parts headers.    
+    //add the Race part region headers.    
     var i = 0;
     for(region in race_bio_regions) {
         var side_to_add = "#racePartBuildLeft"
