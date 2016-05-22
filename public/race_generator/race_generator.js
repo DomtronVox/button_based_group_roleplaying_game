@@ -1,3 +1,13 @@
+//TODO:
+// * break up code into several files
+// * write function that handles building a part string since we do it twice
+// * use a key combo like ctrl+click to delete race parts so we don't accidentally delete things either when trying to select of by a stray click.
+// * add sorting buttons like A-Z, Z-A, By System, By Region
+// * add more filters like by system, ??(ask swords)
+// * add help button and help popup
+// * try to reduce the calls to capitalizeEachWord
+
+
 
 $(window).load(function() {
 
@@ -58,8 +68,8 @@ $(window).load(function() {
          }
 
 
-         button_ui.clearButtonList("RegionsText","");
-         button_ui.addButtonsToElement("RegionsText", region_buttons);
+         button_ui.clearButtonList("RegionText","");
+         button_ui.addButtonsToElement("RegionText", region_buttons);
 
 
          //since there are multiple systems for some parts we use buttons to allow the
@@ -70,8 +80,8 @@ $(window).load(function() {
              sys_buttons.push({"id": system+"Add", "text":capitalizeEachWord(system), 
                                "onclick":limited_select_onclick});
          }
-         button_ui.clearButtonList("SystemsText","");
-         button_ui.addButtonsToElement("SystemsText", sys_buttons);
+         button_ui.clearButtonList("SystemText","");
+         button_ui.addButtonsToElement("SystemText", sys_buttons);
 
          //setup the functional type buttons
          var functional_type_buttons = [
@@ -176,19 +186,34 @@ $(window).load(function() {
             return;
         }
 
+        //create dict to store the new part
+        var part_data = {};
+
         //build a string that identifies the part and make note
-        var part_text = $("#NameText").text()+" ("
+        var part_text = $("#NameText").text()+" (";
+        part_data["name"] = $("#NameText").text();
+
+        var att_name;
         $.each($("#SelectionInfo .Selected"), function() {
             part_text += $(this).text() + ", ";
+            
+            att_name = $($(this).parent()).attr("id").replace("Text", "");
+
+            part_data[att_name] = $(this).text().toLowerCase();
         });
-        part_text += part_text.substr(0, part_text.length-2)+")";
+        part_text = part_text.substr(0, part_text.length-2)+")";
+
 
         //get region the part belongs to and add it to that region in the race summery
-        var region = $("#RegionsText .Selected").attr("internal_id").replace("Add", "");
-
+        var region = $("#RegionText .Selected").attr("internal_id").replace("Add", "");
+        console.log(region)
         $("#RaceSummery"+capitalizeEachWord(region)).append("<li>"+part_text+"</li>");
         $("#RaceSummery"+capitalizeEachWord(region)+" li").click(delete_onclick);
-
+        
+        //update query string
+        var part_qstr = saveRaceToQuery([part_data]);
+        var updated_url = document.location.search + "&" + part_qstr;
+        window.history.pushState({path:updated_url},'',updated_url)
     });
 
     //add the Race part region headers.    
@@ -212,19 +237,27 @@ $(window).load(function() {
 
         if(typeof str != "string" || str.length == 0) return {};
 
+        //decodes things like , : ; ect from %** form to their respective characters
+        str = decodeURIComponent(str)
+
         var s = str.split("&");
         var bit, parts = [], cur_part = {}, part_attr;
 
         for(var i = 0; i < s.length; i++) {
+            //form of each part is <part name>=<part attrabutes> where attrabutes are
+            //  seperated by ; and are key value pairs of the form <att name>:<att val>
 
+            //seperate the part between it's name and attrabutes
             bit = s[i].split("=");
-            name = decodeURIComponent(bit[0]);
+            name = bit[0];
 
+            //skip if name is invalid
             if(name.length == 0) continue;
 
-            part_attr = decodeURIComponent(bit[1]);
-
-            part_attr = part_attr.split(",");
+            //break out the part's attrabutes
+            part_attr = bit[1];
+            
+            part_attr = part_attr.split(";");
 
             //setup part attrabutes
             cur_part["name"] = name;
@@ -242,31 +275,37 @@ $(window).load(function() {
     }
 
     //Builds a query string
-    function buildSaveRaceToQuery(params) {
+    function saveRaceToQuery(params) {
 
         var full_str = "", part_str = "";
+
         for (part in params) {
-            
+            part = params[part]
             //part name is used as the query string's key
             part_str = part["name"]+"=";
+            
             //go through each part of info that needs saving
-            for (key in Object.keys(part)) {
+            var keys = Object.keys(part);
+            for (var key in keys) {
+                key = keys[key];
+
                 if (key == "name") { continue; } //skip name entry
                 
                 if (typeof part[key] == Array) {
-                    part_str = key + ":" + part[key].join(",") + ";";
+                    part_str += key + ":" + part[key].join(",") + ";";
                 } else {
-                    part_str = key + ":" + part[key] + ";";
+                    part_str += key + ":" + part[key] + ";";
                 }
             }
-            
-            //add part to the full string
-            full_str += part_str + "&"
+
+            //cut out extra ; and add part to the full string
+            full_str += part_str.substring(0, part_str.length-1) + "&"
         }
         //return all but the last character (which is an extra &
-        //TODO maybe escape the , and : and ;
-        return full_str.substring(0,full_str.length-1);
+        return encodeURIComponent(full_str.substring(0,full_str.length-1).toLowerCase());
     }
+
+
 
     //see if there is a query string with race info.
     var loaded_race = parseRaceFromQuery( document.location.search.substring(1) )
@@ -279,8 +318,9 @@ $(window).load(function() {
 
             //build part string
             part_text = capitalizeEachWord(part["name"]) + " (";
-
+            console.log(part)
             for (var attr in part) {
+                console.log(attr)
                 if (attr == "name") { continue; }
                 part_text += capitalizeEachWord(part[attr]) + ", ";
             }
@@ -290,7 +330,7 @@ $(window).load(function() {
 
             //add part to the race summery window
             region = part["region"] || "regionless";
-
+            console.log(region)
             $("#RaceSummery"+capitalizeEachWord(region)).append("<li>"+part_text+"</li>");
             $("#RaceSummery"+capitalizeEachWord(region)+" li").click(delete_onclick);
         }
