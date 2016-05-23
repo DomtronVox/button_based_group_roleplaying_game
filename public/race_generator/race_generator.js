@@ -12,9 +12,6 @@
 
 $(window).load(function() {
 
-    //list of parts for the current build
-    var race_creator_build_parts = [];
-
     //self explanitory utility function
     function capitalizeEachWord(str) {
         return str.replace(/\w\S*/g, function(txt) {
@@ -66,7 +63,7 @@ $(window).load(function() {
              }
 
          } else {
-             region_buttons.push({"id": "regionnotapplicable", "text":"Not Applicable",
+             region_buttons.push({"id": "regionnotapplicable", "text":"Regionless",
                                   "onclick":limited_select_onclick});
          
          }
@@ -171,8 +168,11 @@ $(window).load(function() {
 
     //next part is to setup the Race Summery section 
 
-    //delete the section_onclcik
-    var delete_onclick = function(){
+    //list of parts for the current build
+    var race_creator_build_parts = [];
+
+    //delete the section_onclick
+    var delete_part_onclick = function(){
         //remove the part from thepart list
         var index = $(this).attr("id").replace("RP", "");
         race_creator_build_parts[index] = null;
@@ -204,7 +204,7 @@ $(window).load(function() {
         $("#RaceSummery"+capitalizeEachWord(region))
             .append("<li id=\""+id+"\">"+part_text+"</li>");
         $("#RaceSummery"+capitalizeEachWord(region)+" li")
-            .click(delete_onclick);
+            .click(delete_part_onclick);
 
         //add part to parts list so we can generate the new save query
         race_creator_build_parts.push(part_data);
