@@ -9,7 +9,11 @@
 
 
 
+
 $(window).load(function() {
+
+    //list of parts for the current build
+    var race_creator_build_parts = [];
 
     //self explanitory utility function
     function capitalizeEachWord(str) {
@@ -167,11 +171,46 @@ $(window).load(function() {
 
     //next part is to setup the Race Summery section 
 
-    var chosen_parts = [];
-
     //delete the section_onclcik
     var delete_onclick = function(){
+        //remove the part from thepart list
+        var index = $(this).attr("id").replace("RP", "");
+        race_creator_build_parts[index] = null;
+
+        //remove element from race summery
         $(this).remove()
+
+        //update query string
+        updateQueryString()
+    }
+
+    //add an item to the race summary section
+    var addRacePart = function(part_data) {
+        //build part string
+        part_text = capitalizeEachWord(part_data["name"]) + " (";
+        
+        for (var attr in part_data) {
+            if (attr == "name") { continue; }
+            part_text += capitalizeEachWord(part_data[attr]) + ", ";
+        }
+
+        //cut out extra comma and add ending parenthesis
+        part_text = part_text.substr(0, part_text.length-2) + ")";
+
+        //part id for removing parts later
+        var id = "RP" + race_creator_build_parts.length;
+        var region = part_data["region"] || "regionless";
+
+        $("#RaceSummery"+capitalizeEachWord(region))
+            .append("<li id=\""+id+"\">"+part_text+"</li>");
+        $("#RaceSummery"+capitalizeEachWord(region)+" li")
+            .click(delete_onclick);
+
+        //add part to parts list so we can generate the new save query
+        race_creator_build_parts.push(part_data);
+
+        //update query string
+        updateQueryString();
     }
 
     //attach an event to add the selected part
@@ -189,31 +228,17 @@ $(window).load(function() {
         //create dict to store the new part
         var part_data = {};
 
-        //build a string that identifies the part and make note
-        var part_text = $("#NameText").text()+" (";
+        //build a dictionary that contains the part's attrabutes
         part_data["name"] = $("#NameText").text();
-
         var att_name;
         $.each($("#SelectionInfo .Selected"), function() {
-            part_text += $(this).text() + ", ";
-            
             att_name = $($(this).parent()).attr("id").replace("Text", "");
 
-            part_data[att_name] = $(this).text().toLowerCase();
+            part_data[att_name.toLowerCase()] = $(this).text().toLowerCase();
         });
-        part_text = part_text.substr(0, part_text.length-2)+")";
-
-
-        //get region the part belongs to and add it to that region in the race summery
-        var region = $("#RegionText .Selected").attr("internal_id").replace("Add", "");
-        console.log(region)
-        $("#RaceSummery"+capitalizeEachWord(region)).append("<li>"+part_text+"</li>");
-        $("#RaceSummery"+capitalizeEachWord(region)+" li").click(delete_onclick);
-        
-        //update query string
-        var part_qstr = saveRaceToQuery([part_data]);
-        var updated_url = document.location.search + "&" + part_qstr;
-        window.history.pushState({path:updated_url},'',updated_url)
+        console.log(part_data)
+        //actually add the part info to the race summery
+        addRacePart(part_data);
     });
 
     //add the Race part region headers.    
@@ -281,6 +306,10 @@ $(window).load(function() {
 
         for (part in params) {
             part = params[part]
+
+            //skip deleted entries
+            if (part == null) { continue; }
+
             //part name is used as the query string's key
             part_str = part["name"]+"=";
             
@@ -305,6 +334,33 @@ $(window).load(function() {
         return encodeURIComponent(full_str.substring(0,full_str.length-1).toLowerCase());
     }
 
+    //updates the URL with a new query string. Ussually run after altering the list
+    //  of chosen parts.
+    function updateQueryString() {
+        //get new race query string
+        var race_str = saveRaceToQuery(race_creator_build_parts);
+
+        //A little clunky but I wanted to make sure this was portable
+        //  basiclly just gets the "file" name of the current page (index.html)
+        var path_list = document.location.pathname.split("/")
+        var page_name = path_list[path_list.length-1];
+
+        //create new url based on the race query string.
+        var updated_url = "";
+        if (race_str.length > 0) {
+            updated_url = page_name+"?"+race_str;
+        } else {
+            updated_url = page_name;
+        }
+
+        //push the new url to the url bar without reloading the page
+        //  (we do this so selected buttons don't get nerfed)
+        window.history.pushState({path:updated_url},'',updated_url)
+
+        //also update text box
+        console.log(document.location.href)
+        $("#RaceURL").val(document.location.href);
+    }
 
 
     //see if there is a query string with race info.
@@ -312,27 +368,12 @@ $(window).load(function() {
 
     //there is one. load it.
     if (loaded_race.length != 0) {
-        var part_text = ""; 
-        for (var part in loaded_race) {
-            part = loaded_race[part];
-
-            //build part string
-            part_text = capitalizeEachWord(part["name"]) + " (";
-            console.log(part)
-            for (var attr in part) {
-                console.log(attr)
-                if (attr == "name") { continue; }
-                part_text += capitalizeEachWord(part[attr]) + ", ";
-            }
-
-            //cut out extra comma and add ending parenthesis
-            part_text = part_text.substr(0, part_text.length-2)+")";
+        for (var part_data in loaded_race) {
+            part_data = loaded_race[part_data];            
 
             //add part to the race summery window
-            region = part["region"] || "regionless";
-            console.log(region)
-            $("#RaceSummery"+capitalizeEachWord(region)).append("<li>"+part_text+"</li>");
-            $("#RaceSummery"+capitalizeEachWord(region)+" li").click(delete_onclick);
+            addRacePart(part_data);
         }
     }
+
 });
