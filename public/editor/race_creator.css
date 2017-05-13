@@ -1,0 +1,33 @@
+
+
+#race_creator_display-part_info > lable {
+    font-weight:bold;
+
+}
+
+#race_creator_bio_parts {
+    overflow-y: auto;
+
+    height: 100%;
+}
+
+#race_filter_buttons > button, #race_creator_bio_parts > button {
+    width:90%;
+    text-align: center;
+    margin:2px;
+}
+
+#race_filter_buttons {
+    margin-top: 10px;
+}
+
+#race_creator_add_new_part {
+    width:90%;
+    margin-bottom:20px;
+}
+
+.Selected {
+    background: #007fff;
+    color: white;
+    border: #003eff;
+}

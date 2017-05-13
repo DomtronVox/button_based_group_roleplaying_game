@@ -301,7 +301,7 @@ A: This allows you the ability to grab things with your tongue, or to deliver a 
 
 
 
-A: Gecko pads: Skin, integumentary system, hands, foot
+A: Gecko pads: Skin, integumentary system, hand, foot
 A: You have suckers in sufficient quantity and strength that you can 'climb' on ceilings in environments with 1 earth gravity environments. Most frequently on hands and feet, sometimes on shins.
 A: Grants the ability listed above, but requires that you not be wearing armor over the padded areas to use them.
 
@@ -414,7 +414,7 @@ A: This can use mist, spray, or intravenous to attack other targets. If the glan
 
 
 
-A: Kangaroo feet: Foot, muculoskeletal
+A: Kangaroo feet: Foot, Musculoskeletal
 A: You have enormous, bouncy feet.
 A: Your kicks, jumping, and swimming are all improved. However, armor costs as much as the foot armor of someone 2 feet taller than you, and your feet are easier to target.
 
@@ -765,7 +765,7 @@ A: Your size affects how hard you are to hit with a ranged weapon, how hard you 
 
 
 
-A: Skeleton of Taur: Musculoskeltal, pelvis
+A: Skeleton of Taur: Musculoskeletal, pelvis
 A: You have a skeleton that resembles a centaur. The 'human' part doesn't have to resemble a human, and the 'horse' part doesn't have to resemble a horse. Taurs are more massive because of how their bodies are shaped and the additional legs, pelvis, and extended length and breadth torso. You are able to sit on the floor with your back legs while standing with your front legs.
 A: Being a taur affects how hard it is to hit you, how much space you occupy, the cost of armor, how hard you are to kill, how fast you move, how far you jump, how much you weigh, how much you can lift, and how much damage you inflict in melee.
 

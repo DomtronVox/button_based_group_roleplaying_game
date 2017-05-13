@@ -1,6 +1,6 @@
-/*we want to keep eveything on one page so we do a genaeral limit on divs*/
+/*we want to keep eveything on one page so we do a general limit on divs*/
 div {
-    max-height:98%;
+    max-height:90%;
 }
 
 
@@ -11,10 +11,20 @@ lable {
 }
 
 .Info {
-    height:48%;
+    height:80%;
 
     padding: 8px;
     margin-bottom:10px;
+}
+
+#HeaderBar { 
+    border:2px solid black;
+    height:30px;
+    padding:4px;
+}
+
+#RaceURLBox {
+    float:right;
 }
 
 #SelectionInfo div {
@@ -35,7 +45,12 @@ lable {
 }
 
 
+#tab_bar {
+    margin-top:4px;
 
+    padding:4px;
+    height: 35px;
+}
 
 #RegionsText {
     float:left;

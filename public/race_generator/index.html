@@ -15,24 +15,41 @@
 </head>
 
 <body>
+  <div id="HeaderBar" class="ColumnFull">
+    <div class="HButtonList" style="float:left;">
+        <div id="HelpButton" class="Button">Help</div>
+    </div>
+    <div id="RaceURLBox">
+        <label>Race URL (to save configuration):</label> <input id="RaceURL" type="text"></input>
+    </div>
+  </div>
+
   <div class="ColumnFourth">
-      <div id="Filters"class="Section">
+      <div id="Filters" class="Section">
           <h4>Filters</h4>
 
           <lable>Filter by Region: </lable>
           <select id="RegionSelect"><option value="all">All</option></select>
 
 
-          <div id="FilterButtons"class="ButtonList"></div>
+          <div id="FilterButtons" class="VButtonList"></div>
       </div>
       <div class="Section">
           <h4>Sorting</h4>
-          <div id="Sort Order" class="ButtonList"></div>
+          <div id="Sort Order" class="VButtonList"></div>
       </div>
   </div>
-  <div id="BioParts" class="ColumnFourth ButtonList Section"><h4>Biological Parts</h4></div>
-  <div class="ColumnHalf">
-      <div id="SelectionInfo" class="Info Section">
+  <div id="BioParts" class="ColumnFourth VButtonList Section Scrollable"><h4>Biological Parts</h4></div>
+
+  <div class="ColumnHalf Section">
+      <div id="tab_bar" class="HButtonList" >
+          <div id="RaceSummaryOpen" class="Button">Race Summary</div>
+          <div id="PartInfoOpen" class="Button">Part Information</div>
+      </div>
+
+      <hr />
+
+      <div id="SelectionInfo" class="Info Scrollable">
           <h4>Part Information (hover parts button to display)</h4>
 
           <lable>Name: </lable><div id="NameText"></div>
@@ -49,7 +66,9 @@
                   <lable>Body Regions: </lable><div id="RegionText"></div>
               </div>
 
-              <div class="ColumnHalf"><p>Systems: </p><div id="SystemText"></div></div>
+              <div class="ColumnHalf">
+                  <lable>Systems: </lable><div id="SystemText"></div>
+              </div>
 
               <div class="ColumnFourth">
                   <lable>Functional Type: </lable><div id="FunctionType"></div>
@@ -59,9 +78,9 @@
           
       </div>
 
-      <div id="RaceSummery" class="Info Section">
-          <div><label>Race URL (to save configuration):</label> <input id="RaceURL" type="text"></input></div>
-          <div><label>Race name:</label> <input type="text"></input></div>
+      <div id="RaceSummery" class="Info Scrollable">
+          
+          <div><label>Race name:</label> <input id="RaceName" type="text"></input></div>
           <div>
               <p>Race Parts</p>
               <div id="racePartBuildLeft" class="ColumnHalf"><ul></ul></div>

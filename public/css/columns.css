@@ -1,13 +1,34 @@
-div.ColumnFourth {
-  width: 20%;
+.ColumnFourth {
+  width: 24%;
   float: left;
   height: auto;
-  margin-left: 10px;
+
 }
 
-div.ColumnHalf {
-  width: 50%;
+.ColumnHalf {
+  width: 48%;
   float: left;
   height: auto;
-  margin-left: 10px;
+
 }
+
+.ColumnThreeFourths {
+  width: 74%;
+  float: left;
+  height: auto;
+
+}
+
+.ColumnFull {
+  width: 98%;
+  float: left;
+  height: auto;
+
+}
+
+.ColumnHeightStretch {
+  min-height: 600px;
+  height: auto !important;
+  height: 600px;
+}
+

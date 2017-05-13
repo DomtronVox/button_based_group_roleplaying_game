@@ -24,8 +24,10 @@ exports.RG = function() {
         //objects into which the data will be placed
         var bio_parts = {};
         var bio_regions = {"head":[], "neck":[], "thorax":[], "arm":[], "hand":[],
-         "wings":[], "wing tips":[], "back":[], "abdomen":[], "pelvis":[],
+         "wings":[], "wing tip":[], "back":[], "abdomen":[], "pelvis":[],
          "tail":[], "tail tip":[], "leg":[], "foot":[], "regionless":[]}
+        var bio_tissues = {"skin":[], "keratin":[], "muscle":[], "fat":[]}
+        var bio_systems = {};
 
         //strip out multiple new lines and replace with a single new line
         data = data.replace(/^\s*[\r\n]/gm, '\n');
@@ -53,26 +55,41 @@ exports.RG = function() {
             
 
             //sort the list into regions, systems, and tissues
-            var part_regions = [], part_systems = []; 
+            var part_regions = [], part_systems = [], part_tissues = []; 
 
             var mix_list = line_one[1].split(",");
             var no_region = true;
 
             for (element in mix_list) {
-                element = mix_list[element].toLowerCase().trim();
+                element = mix_list[element].toLowerCase()
+                             .replace("system", "")
+                             .replace(".", "").trim();
+                
+
+                if (element == "") continue;
 
                 if(bio_regions[element] != undefined) {
                     //add region to part's list
                     part_regions.push(element);
                     
-                    //add part to rgion list (easyer serching)
+                    //add part to region list (easyer searching)
                     bio_regions[element].push(name);
 
                     no_region = false;
 
-                //} else if (element in Tissues)
+                } else if (bio_tissues[element] != undefined) {
+                    part_tissues.push(element);
+                    
+                    bio_tissues[element].push(name);
+
                 } else {
                     part_systems.push(element);
+
+                    if (bio_systems[element] == undefined) {
+                        bio_systems[element] = []
+                    }
+
+                    bio_systems[element].push(name)
                 }
             }
             
@@ -90,6 +107,7 @@ exports.RG = function() {
                 "name": name,
                 "regions": part_regions,
                 "systems": part_systems,
+                "tissues": part_tissues,
                 "appearance": appearance,
                 "functional": functional
             }
@@ -100,7 +118,9 @@ exports.RG = function() {
         //write file
         fs.writeFile('public/race_generator/data.js', 
             "var race_bio_parts =" + JSON.stringify(bio_parts) +
-          "\nvar race_bio_regions ="+JSON.stringify(bio_regions), 
+          "\nvar race_bio_regions ="+JSON.stringify(bio_regions) +
+          "\nvar race_bio_systems ="+JSON.stringify(bio_systems) +
+          "\nvar race_bio_tissues ="+JSON.stringify(bio_tissues), 
         function (err) {
             if (err) throw err;
             console.log('Race bio_parts text file parsed and saved to json!');

@@ -1,12 +1,18 @@
 
 
-.Section {
+fieldset {
   border: 2px;
   border-style: solid;
-
-  overflow-y:scroll;
 
   margin-top: 5px;
 
   padding:2px;
+}
+
+.Scrollable {
+  overflow-y:scroll;
+}
+
+.Hide {
+  display: none;
 }
