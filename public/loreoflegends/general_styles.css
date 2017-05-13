@@ -1,0 +1,29 @@
+/*we want to keep eveything on one page so we do a general limit on divs*/
+html, body {
+    height:92%;
+}
+
+lable {
+    margin-left:10px;
+}
+
+#tab_bar {
+    margin-top:4px;
+
+    padding:4px;
+    height: 35px;
+}
+
+.TabArea {
+    margin-top:8px;
+}
+
+.TabAreaScroll {
+    max-height:98%;
+    overflow-y: auto;
+}
+
+
+.ui-selectmenu-button.ui-button {
+    max-width: 60%;
+}

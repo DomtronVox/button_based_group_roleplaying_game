@@ -1,0 +1,81 @@
+<html>
+
+<head>
+  <title>Lore of Legends - Creative story setting maker</title>
+
+  <!--general styling -->
+  <link rel="stylesheet" type="text/css" href="/css/columns.css" />
+  <link rel="stylesheet" type="text/css" href="general_styles.css" />
+
+  <!-- 3rd party js scripts and styles-->
+  <script src="/scripts/jquery.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
+  <script src="/scripts/jquery-ui.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="/css/jstree-default-theme/style.css" />
+  <script src="/scripts/jstree.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="simplemde.min.css" />
+  <script src="simplemde.min.js"></script>
+  
+
+  <!-- local custom scripts and styles --> 
+  <script src="general_code.js"></script>
+
+  <script src="fragment_core.js"></script>
+
+
+  <script src="description_fragment.js"></script>
+
+
+  <script src="fragment_viewer.js"></script>
+
+</head>
+
+  <div id="fragment_viewer">
+      <fieldset id="fragment_viewer-header_bar" class="ColumnFull">
+          <button id="fv_help_button">Help</button>
+          <button id="new_description_button">New Description</button>
+          <button id="new_date_button">New Date</button>
+          <button id="new_race_button">New Race/Species</button>
+          <button id="new_designed_button">New Design</button>
+      </fieldset>
+
+      <div class="ColumnFourth ColumnHeightStretch">
+          <fieldset id="fragment_list"> 
+              <legend>Fragment List</legend>
+              <div id="fragment_list-tree"></div>
+          </fieldset>
+          
+          <fieldset id="lore_list"> 
+              <legend>Lore List</legend>
+              <div id="lore_list-tree"></div>
+          </fieldset>
+
+      </div>
+
+
+
+      <div id="fragment_display" class="TabArea ColumnThreeFourths ColumnHeightStretch">
+          <ul id="fragment_viewer_tabs"> 
+              <li><a href="#fragment_viewer-lore">Lore Viewer</a></li> 
+              <li><a href="#fragment_viewer-timeline">Timeline</a></li>
+              <li><a href="#fragment_viewer-fragment">Fragment Viewer</a></li> 
+          </ul>
+
+          <div class="TabAreaScroll">
+              <div id="fragment_viewer-lore">test</div>
+              <div id="fragment_viewer-timeline">test2</div>
+              <div id="fragment_viewer-fragment">test2</div>
+          </div>
+      </div>
+
+  </div>
+
+
+<body>
+
+  
+
+</body>
