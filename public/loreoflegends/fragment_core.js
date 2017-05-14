@@ -88,9 +88,28 @@ FC.createFragment = function(category, data, tags){
 }
 
 //creates a new lore using given information
-FC.createLore = function(data, tags){
+FC.createLore = function(name, fragments, tags){
 
+    var new_lore = {};
+
+    //set id
+    FC.lore_id++;
+    new_lore["id"] = FC.lore_id;
+    new_lore["name"] = name;
     
+    //set fragment data
+    new_lore["fragments"] = fragments;
+    new_lore["tags"] = [];
+
+    //place the lore in proper lists
+    FC.lore[FC.lore_id] = new_lore;
+
+    //>add fragment id to all tags 
+    for ( var index in tags ) {
+        var tag = tags[index];
+
+        FC.addTag(FC.lore_id, tag, "lore")
+    }
 
 }
 
