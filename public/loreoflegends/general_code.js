@@ -16,45 +16,12 @@ $("#new_fragment_button").click(function(){
 });
 
 //hide the Editors right off the bat
-$("#race_creator").hide(); //$(".Editor").hide();
+$("#editor_box").hide();
 
-$("#editor_header_bar").hide();
-
-$("#new_fragment_button").click(function() {
-    
-    
-
+$("#new_description_button").click(function(){
+    $("#editor_box").show();
 })
 
-$("#new_race_button").click(function() {
-    $("#editor_header_bar").show();
-
-    $("#race_creator").show();
-    $("#content_viewer").hide();
-
-    //RCA.resetData();
-
-})
-
-$("#new_weapon_button").click(function() {
-    $("#editor_header_bar").show();
-
-    $("#weapon_creator").show();
-    $("#content_viewer").hide();
-
-    //WCA.resetData();
-})
-
-$("#back_cm_button").click(function() {
-    //alert("Do you want to save changes or discard data.", "yes", "no", "stay on page")
-
-    $("#editor_header_bar").hide();
-
-    $("#content_viewer").show();
-    $("#race_creator").hide();
-    
-
-})
 
 
 })

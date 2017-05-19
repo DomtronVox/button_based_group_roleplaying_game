@@ -36,10 +36,10 @@
   <div id="fragment_viewer">
       <fieldset id="fragment_viewer-header_bar" class="ColumnFull">
           <button id="fv_help_button">Help</button>
-          <button id="new_description_button">New Description</button>
+<!--          <button id="new_description_button">New Description</button>
           <button id="new_date_button">New Date</button>
           <button id="new_race_button">New Race/Species</button>
-          <button id="new_designed_button">New Design</button>
+          <button id="new_designed_button">New Design</button> -->
       </fieldset>
 
       <div class="ColumnFourth ColumnHeightStretch">
@@ -65,14 +65,42 @@
           </ul>
 
           <div class="TabAreaScroll">
-              <div id="fragment_viewer-lore">test</div>
-              <div id="fragment_viewer-timeline">test2</div>
-              <div id="fragment_viewer-fragment">test2</div>
+              <div id="fragment_viewer-lore">
+                  <button id="fragment_viewer-lore-edit">Edit Lore</button>
+                  <div id="fragment_viewer-lore-display"></div>
+              </div>
+
+              <div id="fragment_viewer-timeline"></div>
+
+              <div id="fragment_viewer-fragment">
+                  <button id="fragment_viewer-fragment-edit">Edit Fragment</button>
+                  <div id="fragment_viewer-fragment-display"></div>
+              </div>
           </div>
       </div>
 
   </div>
 
+  <div id="editor_box">
+      <fieldset id="editor_box-header_bar" class="">
+          <button id="editor-save">Save</button>
+          <button id="editor-save_exit">Save & Exit</button>
+          <button id="editor-exit">Exit & Discard</button>
+      </fieldset>
+
+      <fieldset id="editor_box-default_fragment_form">
+          <lable>Fragment Name: </lable>
+          <input id="editor_box-name_string" type="text"></input>
+
+          <lable>Tags: </lable>
+          <input id="editor_box-tag_string" type="text"></input>
+          <select id="editor_box-tag_select">
+              <option value="Tags">Tags</option>
+          </select>
+      </fieldset>
+
+      <div id="editor_box-contents"></div>
+  </div>
 
 <body>
 

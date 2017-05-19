@@ -7,13 +7,6 @@ lable {
     margin-left:10px;
 }
 
-#tab_bar {
-    margin-top:4px;
-
-    padding:4px;
-    height: 35px;
-}
-
 .TabArea {
     margin-top:8px;
 }
@@ -23,7 +16,29 @@ lable {
     overflow-y: auto;
 }
 
-
-.ui-selectmenu-button.ui-button {
-    max-width: 60%;
+/*for markdown editor*/
+.CodeMirror {
+	height: 100px;
 }
+
+
+#editor_box {
+    position: fixed;
+    z-index: 99 !important;
+
+    background-color: white;
+    margin: auto;
+
+    border: double 4px;
+
+    height: 100%;
+
+    left: 20px;
+    right: 20px;
+
+    overflow:scroll;
+
+    max-height: 80%
+}
+
+

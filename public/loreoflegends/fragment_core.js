@@ -28,7 +28,7 @@ FC.tagged_lore = {};
 
 //registers a new fragment category from provided name, default data fields, and
 //    view render function.
-FC.registerFragmentType = function(category_name, default_fields, view_func){
+FC.registerFragmentType = function(category_name, default_fields, view_func, editor_func, save_func){
 
     if (FC.categories[category_name] == undefined) {
         FC.categories[category_name] = {};
@@ -36,20 +36,22 @@ FC.registerFragmentType = function(category_name, default_fields, view_func){
         //default data for the fragment
         FC.categories[category_name]["data"] = default_fields;
 
-        //storing functions for rendering the fragment
+        //storing functions for rendering, editing and saving the fragment
         FC.categories[category_name]["views"] = {"default":view_func};
+        FC.categories[category_name]["editors"] = {"default":editor_func};
+        FC.categories[category_name]["savers"] = {"default":save_func};
 
         //list of all fragment ids that are of this type
         FC.categories[category_name]["fragments"] = [];
 
     } else {
-        console.log("Error: fragment core: registering fragment with existing category name not allowed.")
+        console.log("Error: fragment core: registering new category with existing category name not allowed.")
     }
 
 }
 
 //creates a new fragment using given information
-FC.createFragment = function(category, data, tags){
+FC.createFragment = function(category, name, data, tags){
     //varify inputs
     if ( FC.categories[category] == undefined ) {return;}
 
@@ -59,6 +61,7 @@ FC.createFragment = function(category, data, tags){
     //assign id
     FC.fragment_id++;
     new_fragment["id"] = FC.fragment_id;
+    new_fragment["name"] = name;
     new_fragment["category"] = category;
 
     //setup defaults
