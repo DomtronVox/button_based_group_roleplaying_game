@@ -119,6 +119,9 @@ FC.createLore = function(name, fragments, tags){
 //adds a tag to either fragments or lore
 FC.addTag = function(id, new_tag, type) {
 
+    //sanity check
+    if (new_tag == "" || new_tag == undefined) { return;}
+
     //pick right sources based on type
     var id_list, tag_list;
     if (type.toLowerCase() == "lore") {
@@ -133,10 +136,10 @@ FC.addTag = function(id, new_tag, type) {
     if ( id_list[id] == undefined ) {return;}
     
     //abort if tag is already in list
-    var index = id_list[id]["tags"].find(
+    var index = id_list[id]["tags"].findIndex(
                     function(tag_iter) {return tag_iter == new_tag;}
                 )
-    if (index != undefined) { return; }
+    if (index != -1) { return; }
 
     //add tag to fragment/lore
     id_list[id]["tags"].push(new_tag);
@@ -168,25 +171,25 @@ FC.removeTag = function(id, tag, type){
     if ( id_list[id] == undefined ) {return;}
 
     //abort if tag not already in list
-    var index = id_list[id]["tags"].find(
+    var index = id_list[id]["tags"].findIndex(
         function(tag_iter) {return tag_iter == tag;}
     )
     
-    if (index == undefined ) {
+    if (index == -1 ) {
         return;
 
     //if tag is in the list, remove it
     } else {
-        id_list[id]["tags"] = id_list[id]["tags"].splice(index, 1);
+        id_list[id]["tags"].splice(index, 1);
     }
 
     //remove fragment from tag list
-    var index = tag_list[tag].find(
-        function(tag_iter){return tag_iter == tag;}
+    var index = tag_list[tag].findIndex(
+        function(fragment_id){return fragment_id == id;}
     )
     
-    if (index != undefined ) {
-        tag_list[tag] = tag_list[tag].splice(index, 1);
+    if (index != -1 ) {
+        tag_list[tag].splice(index, 1);
     }
 }
 

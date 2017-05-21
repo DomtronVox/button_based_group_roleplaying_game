@@ -115,6 +115,9 @@ FV.updateFragmentTree = function() {
 
             //switches focus to the fragment viewer tab so the user does not get lost
             $( "#fragment_display" ).tabs( {active: 2} )
+
+            //show the edit button
+            $("fragment_viewer-fragment-edit").show();
         }
 
     })
@@ -178,6 +181,9 @@ FV.updateLoreTree = function() {
 
             //switches focus to the fragment viewer tab so the user does not get lost
             $( "#fragment_display" ).tabs( {active: 0} )
+
+            //show edit button
+            //$("fragment_viewer-lore-edit").show();
         }
 
     })
@@ -235,13 +241,36 @@ FV.setupEditorButtons = function(){
         var name_str = $("#editor_box-name_string").val();
 
         var tags_str = $("#editor_box-tag_string").val();
-        var tags = tags_str.split(',');
+        var new_tags = tags_str.split(',');
 
+        //if we are editing an existing fragment just edit the data
         if (FV.current_fragment != null) {
             FV.current_fragment.name = name_str;
             FV.current_fragment.data = data;
-            FV.current_fragment.tags = tags
+
+            //add tags
+            for ( var index in new_tags ) {
+                var tag = new_tags[index];
+                //if the tag is missing from current fragments then add it
+                var ok = FV.current_fragment.tags.find(function(t){ return t == tag;})
+                if ( ok == undefined ) {
+                    Fragment_Core.addTag(FV.current_fragment.id, tag, "fragment");
+                }
+            }
+
+            //remove tags
+            var tags_list = jQuery.extend(true, [], FV.current_fragment.tags);
+            for ( var index in tags_list ) {
+                var tag = tags_list[index];
+                //if the tag is missing from the new tag list we remove it
+                var ok = new_tags.find(function(t){ return t == tag;})
+                if ( ok == undefined ) {
+                    Fragment_Core.removeTag(FV.current_fragment.id, tag, "fragment");
+                }
+            }
+
             
+        //otherwise create a new fragment
         } else {
             Fragment_Core
                 .createFragment( FV.current_fragment_catagory, name_str, data, tags);
