@@ -117,7 +117,7 @@ FV.updateFragmentTree = function() {
             $( "#fragment_display" ).tabs( {active: 2} )
 
             //show the edit button
-            $("fragment_viewer-fragment-edit").show();
+            $("#fragment_viewer-fragment-edit").show();
         }
 
     })
@@ -183,7 +183,7 @@ FV.updateLoreTree = function() {
             $( "#fragment_display" ).tabs( {active: 0} )
 
             //show edit button
-            //$("fragment_viewer-lore-edit").show();
+            $("#fragment_viewer-lore-edit").show();
         }
 
     })

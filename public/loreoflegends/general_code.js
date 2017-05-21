@@ -10,15 +10,10 @@ $(".TabArea").tabs();
 $(".ControlGroup").controlgroup();
 //$("#fragments_list-tree").jstree();
 
-//Header button logic
-$("#new_fragment_button").click(function(){
-              
-});
-
 //hide the Editor right off the bat
 $("#editor_box").hide();
-$("fragment_viewer-lore-edit").hide();
-$("fragment_viewer-fragment-edit").hide();
+$("#fragment_viewer-lore-edit").hide();
+$("#fragment_viewer-fragment-edit").hide();
 
 $("#new_description_button").click(function(){
     $("#editor_box").show();
