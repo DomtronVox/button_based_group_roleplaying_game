@@ -67,6 +67,24 @@
           <div class="TabAreaScroll">
               <div id="fragment_viewer-lore">
                   <button id="fragment_viewer-lore-edit">Edit Lore</button>
+                  <div id="fragment_viewer-lore-edit_header">
+                       <fieldset>
+                           <button id="lore-save">Save</button>
+                           <button id="lore-save_exit">Save & Exit</button>
+                           <button id="lore-exit">Exit & Discard</button>
+                       </fieldset>
+
+                       <fieldset>
+                          <lable>Lore Name: </lable>
+                          <input id="lore-edit_header-name_string" type="text"></input>
+
+                          <lable>Tags: </lable>
+                          <input id="lore-edit_header-tag_string" type="text"></input>
+                          <select id="lore-edit_header-tag_select">
+                              <option value="Tags">Tags</option>
+                          </select>
+                      </fieldset>
+                  </div>
                   <div id="fragment_viewer-lore-display"></div>
               </div>
 
@@ -88,7 +106,7 @@
           <button id="editor-exit">Exit & Discard</button>
       </fieldset>
 
-      <fieldset id="editor_box-default_fragment_form">
+      <fieldset id="editor_box-default_edit_form">
           <lable>Fragment Name: </lable>
           <input id="editor_box-name_string" type="text"></input>
 

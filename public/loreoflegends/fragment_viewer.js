@@ -15,6 +15,9 @@ FV.current_fragment = null;
 //for new fragments current_fragment is null so we need to know which fragment catagory is being used
 FV.current_fragment_catagory = null; 
 
+//current lore data being edited
+FV.current_lore = null; 
+
 
 //########################################
 //# Navigation tree setup and manipulation
@@ -116,8 +119,8 @@ FV.updateFragmentTree = function() {
             //switches focus to the fragment viewer tab so the user does not get lost
             $( "#fragment_display" ).tabs( {active: 2} )
 
-            //show the edit button
             $("#fragment_viewer-fragment-edit").show();
+
         }
 
     })
@@ -157,15 +160,15 @@ FV.updateLoreTree = function() {
 
         var lore_id = data.node.a_attr["internal_id"];
 
-        //some tree nodes are organizational and so have no fragment id so we ignore them
+        //some tree nodes are organizational and so have no lore id so we ignore them
         if (lore_id != undefined) {
-            var lore = Fragment_Core.lore[lore_id];
+            FV.current_lore = Fragment_Core.lore[lore_id];
 
             //empty html element
             $("#fragment_viewer-lore-display").html("");
 
-            for (var index in lore.fragments) {
-                var fragment_id = lore.fragments[index];
+            for (var index in FV.current_lore.fragments) {
+                var fragment_id = FV.current_lore.fragments[index];
 
                 var fragment = Fragment_Core.fragments[fragment_id];
                 var view_func = Fragment_Core.categories[fragment.category].views.default;
@@ -182,8 +185,6 @@ FV.updateLoreTree = function() {
             //switches focus to the fragment viewer tab so the user does not get lost
             $( "#fragment_display" ).tabs( {active: 0} )
 
-            //show edit button
-            $("#fragment_viewer-lore-edit").show();
         }
 
     })
@@ -193,21 +194,39 @@ FV.updateLoreTree = function() {
 //##############################
 //# Editor setup and manipulation
 
-FV.showEditorBox = function(catagory, fragment){
+//show the editor div and set it up for the current fragment
+FV.showEditorBox = function(catagory, data){
     $("#editor_box").show();
     $("#editor_box-contents").html("");
 
     //populate general form fields
-    if (fragment == null) {
+    if (data == null) {
         $("#editor_box-name_string").val("");
         $("#editor_box-tag_string").val("");
     } else {
-        $("#editor_box-name_string").val(fragment.name);
-        $("#editor_box-tag_string").val(fragment.tags.join(','));
+        $("#editor_box-name_string").val(data.name);
+        $("#editor_box-tag_string").val(data.tags.join(','));
     }
 
+   
+    $("#editor_box-name_label").text("Fragment Name: ");
     //call the catagories editor creation function
-    Fragment_Core.categories[catagory].editors.default(fragment, "#editor_box-contents");
+    Fragment_Core.categories[catagory].editors.default(data, "#editor_box-contents");
+
+}
+
+
+//switch lore tab into edit mode
+FV.toggleLoreEdit = function() {
+
+    if (FV.current_lore == null) { return;}
+
+    $("#fragment_viewer-lore-edit_header").show();
+    $("#fragment_viewer-lore-edit").hide();
+
+    $("#lore-edit_header-name_string").val(FV.current_lore.name);
+    $("#lore-edit_header-tag_string").val(FV.current_lore.tags.join(','));
+
 }
 
 
@@ -233,76 +252,144 @@ FV.setupEditorButtons = function(){
 
     //setup editor save and exit buttons
     
-    var save_data = function() {
-        //call the fragment catagory's saver function to get the new fragment data
-        var data = Fragment_Core.categories[FV.current_fragment_catagory].savers.default();
+    var saveEditor = function(type) {
 
-        //get general form data (name and tags)
-        var name_str = $("#editor_box-name_string").val();
+        //aquire data based on which type this is
+        var new_data, current_object, name_str, tags_str;
 
-        var tags_str = $("#editor_box-tag_string").val();
+        //handle lore data aquisition
+        if (type.toLowerCase() == "lore") { 
+            //save lore data
+            new_data = []//FV.saveLore();
+
+            current_object = FV.current_lore
+
+            //pull form data
+            name_str = $("#lore-edit_header-name_string").val();
+            tags_str = $("#lore-edit_header-tag_string").val();
+
+        //otherwise assume fragment
+        } else {
+            //call the fragment catagory's saver function to get the new fragment data
+            new_data = Fragment_Core.categories[FV.current_fragment_catagory].savers.default();
+
+            current_object = FV.current_fragment;
+
+            //pull form data
+            name_str = $("#editor_box-name_string").val();
+            tags_str = $("#editor_box-tag_string").val();
+        }
+
+        //empty strings should be given some        
+        if (name_str == "") {
+            name_str = "Unnamed";
+        }
+
+
         var new_tags = tags_str.split(',');
 
         //if we are editing an existing fragment just edit the data
-        if (FV.current_fragment != null) {
-            FV.current_fragment.name = name_str;
-            FV.current_fragment.data = data;
+        if (current_object != null) {
+            current_object.name = name_str;
+            current_object.data = new_data;
 
             //add tags
             for ( var index in new_tags ) {
                 var tag = new_tags[index];
                 //if the tag is missing from current fragments then add it
-                var ok = FV.current_fragment.tags.find(function(t){ return t == tag;})
+                var ok = current_object.tags.find(function(t){ return t == tag;})
                 if ( ok == undefined ) {
-                    Fragment_Core.addTag(FV.current_fragment.id, tag, "fragment");
+                    Fragment_Core.addTag(current_object.id, tag, type);
                 }
             }
 
             //remove tags
-            var tags_list = jQuery.extend(true, [], FV.current_fragment.tags);
+            var tags_list = jQuery.extend(true, [], current_object.tags);
             for ( var index in tags_list ) {
                 var tag = tags_list[index];
                 //if the tag is missing from the new tag list we remove it
                 var ok = new_tags.find(function(t){ return t == tag;})
                 if ( ok == undefined ) {
-                    Fragment_Core.removeTag(FV.current_fragment.id, tag, "fragment");
+                    Fragment_Core.removeTag(current_object.id, tag, type);
                 }
             }
 
             
         //otherwise create a new fragment
         } else {
-            Fragment_Core
-                .createFragment( FV.current_fragment_catagory, name_str, data, tags);
+            if (type.toLowerCase() == "lore") { 
+                Fragment_Core.createLore(name_str, new_data, new_tags)
+            } else {
+                Fragment_Core
+                    .createFragment( FV.current_fragment_catagory, name_str, new_data, new_tags);
+            }
         }
 
         //regenerate tree
-        FV.updateFragmentTree();
+        if (type.toLowerCase() == "lore") { 
+            FV.updateLoreTree();
+        } else {
+            FV.updateFragmentTree();
+        }
     }
 
-    var exit_editor = function() {
+    var exitEditor = function(type) {
         //empty general form data
-        var name_str = $("#editor_box-name_string").val("");
-        var tags_str = $("#editor_box-tag_string").val("");
+        if(type.toLowerCase() == "lore") {
+            $("#lore-edit_header-name_string").val("");
+            $("#lore-edit_header-tag_string").val("");
 
-        $("#editor_box-contents").html("");
-        $("#editor_box").hide();
+            //$("#editor_box-contents").html("");
+            $("#fragment_viewer-lore-edit_header").hide();
+            $("#fragment_viewer-lore-edit").show();
+
+        } else {
+            $("#editor_box-name_string").val("");
+            $("#editor_box-tag_string").val("");
+
+            $("#editor_box-contents").html("");
+            $("#editor_box").hide();
+            
+        }
     }
 
-    $("#editor-save").click(save_data)
+    //setup editor buttons
+    $("#editor-save").click(function() { 
+        saveEditor("fragment");
+    })
 
     $("#editor-save_exit").click(function() {
-        save_data();
-        exit_editor();
+        saveEditor("fragment");
+        exitEditor("fragment");
     })
 
     $("#editor-exit").click(function() {
         var exit = confirm("Are you sure? You will loose all unsaved data.")
-        if (exit) { exit_editor();}
+        if (exit) { exitEditor("fragment");}
     })
 
 
+    //setup lore edit buttons
+    $("#lore-save").click(function() { 
+        saveEditor("lore");
+    })
+
+    $("#lore-save_exit").click(function() {
+        saveEditor("lore");
+        exitEditor("lore");
+    })
+
+    $("#lore-exit").click(function() {
+        var exit = confirm("Are you sure? You will loose all unsaved data.")
+        if (exit) { exitEditor("lore");}
+    })
+
 }
+
+
+
+
+
 
 var f1 = Fragment_Core.createFragment( "description", "rise of dolathma"
                             , {"contents":"The rise of __Dolathma__ brought about the eradication of the Cul'ther race."}
@@ -334,6 +421,9 @@ $("#fragment_viewer-fragment-edit").click(function(){
     }
 });
 
+$("#fragment_viewer-lore-edit").click(function(){
+    FV.toggleLoreEdit();
+});
 
 FV.updateFragmentTree();
 FV.updateLoreTree();
