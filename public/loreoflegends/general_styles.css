@@ -21,6 +21,14 @@ lable {
 	height: 100px;
 }
 
+.droppable {
+    padding:4;
+    z-index: 89 !important;
+
+    text-align: center;
+    background-color: yellow;
+}
+
 
 #editor_box {
     position: fixed;

@@ -18,13 +18,18 @@ FV.current_fragment_catagory = null;
 //current lore data being edited
 FV.current_lore = null; 
 
+FV.lore_edit_data = null;
 
 //########################################
 //# Navigation tree setup and manipulation
 
 //function that builds a tree node from given data
 FV.buildTreeNode = function(name, id) {
-    return {"text" : name, "a_attr":{"internal_id" : id} }
+    if (id != undefined) {
+        return {"text" : name, "a_attr":{"internal_id" : id, "class" : "draggable"} }
+    } else {
+        return {"text" : name }
+    }
 }
 
 //function that builds nodes from a list of fragments
@@ -97,6 +102,7 @@ FV.updateFragmentTree = function() {
     $("#fragment_list-tree").jstree(true).settings.core.data = data_tree;
     $("#fragment_list-tree").jstree(true).refresh();
 
+
     $("#fragment_list-tree").on("changed.jstree", function(e, data) {
 
         //only handle specific actions
@@ -123,6 +129,12 @@ FV.updateFragmentTree = function() {
 
         }
 
+    })
+
+
+    $("#fragment_list-tree").on("after_open.jstree", function(e, data) {
+        //allow dragging fragments
+        $(".draggable").draggable({helper: "clone"});
     })
     
 }
@@ -167,14 +179,14 @@ FV.updateLoreTree = function() {
             //empty html element
             $("#fragment_viewer-lore-display").html("");
 
-            for (var index in FV.current_lore.fragments) {
-                var fragment_id = FV.current_lore.fragments[index];
+            for (var index in FV.current_lore.data) {
+                var fragment_id = FV.current_lore.data[index];
 
                 var fragment = Fragment_Core.fragments[fragment_id];
                 var view_func = Fragment_Core.categories[fragment.category].views.default;
 
                 //create html element to contain view renderer results
-                var html_id = "lore_viewer-fragment-" + fragment_id;
+                var html_id = "lore_viewer-fragment-" + fragment_id + "-" + generateRandomString(6);
                 $("#fragment_viewer-lore-display").append("<div id='"+html_id+"'></div>")
 
                 //call the render function for the fragment
@@ -192,9 +204,10 @@ FV.updateLoreTree = function() {
 
 
 //##############################
-//# Editor setup and manipulation
+//# Fragment and Lore Editor setup and manipulation
 
-//show the editor div and set it up for the current fragment
+
+//show the fragment editor div and set it up for the current fragment
 FV.showEditorBox = function(catagory, data){
     $("#editor_box").show();
     $("#editor_box-contents").html("");
@@ -227,6 +240,87 @@ FV.toggleLoreEdit = function() {
     $("#lore-edit_header-name_string").val(FV.current_lore.name);
     $("#lore-edit_header-tag_string").val(FV.current_lore.tags.join(','));
 
+    $("#fragment_viewer-lore-display").html("");
+
+    FV.lore_edit_data = FV.current_lore.data;
+
+    for (var index in FV.current_lore.data) {
+        var fragment_id = FV.current_lore.data[index];
+
+        //add area where we can drop new fragments into
+        $("#fragment_viewer-lore-display").append("<div class='droppable'>Drop Fragments Here To Add</div>");
+        
+        //add fragment preview
+        var fragment = Fragment_Core.fragments[fragment_id];
+        var view_func = Fragment_Core.categories[fragment.category].views.default;
+
+        //>create html element to contain view renderer results
+        var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
+        $("#fragment_viewer-lore-display").append(
+               "<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>"
+        )
+        $("#"+html_id).draggable({helper:"clone"})
+ 
+        //>call the render function for the fragment
+        view_func(fragment, "#"+html_id);
+
+    }
+
+    $("#fragment_viewer-lore-display").append("<div class='droppable'>Drop Fragments Here To Add</div>");
+
+    var drop_activation = function( event, ui ) {
+        var fragment_id = $("#"+ui.draggable[0].id).attr("internal_id");
+
+        if (fragment_id == undefined) { return;}
+
+        //add fragment preview
+        var fragment = Fragment_Core.fragments[fragment_id];
+        var view_func = Fragment_Core.categories[fragment.category].views.default;
+
+        //>create html element to contain view renderer results
+        var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
+        $(this).after(
+                "<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>"
+        )
+        $("#"+html_id).draggable({helper:"clone"})
+
+        //>call the render function for the fragment
+        view_func(fragment, "#"+html_id);
+
+        //add area where we can drop new fragments into
+        $("<div class='droppable'>Drop Fragments Here To Add</div>")
+                .insertAfter("#"+html_id)
+                .droppable({drop: drop_activation});
+
+
+        var list = $("#fragment_viewer-lore-display div");
+        for (var index = 0; index < list.length; index++) {
+            if (list[index].id != html_id) { continue; }
+
+            FV.lore_edit_data.splice((index-1)/2, 0, ui.draggable[0].getAttribute("internal_id"))
+        }
+
+        //if we are just rearanging a current fragment we need to remove the old one
+        if (! ("jstree-anchor" in ui.draggable[0].classList) ) {
+            var list = $("#fragment_viewer-lore-display div");
+            for (var index = 0; index < list.length; index++) {
+                if (list[index].id != ui.draggable[0].id) { continue; }
+ 
+                //delete html elements
+                $("#"+ui.draggable[0].id).next()[0].remove();
+                $("#"+ui.draggable[0].id).remove();                
+
+                //delete id from data
+                FV.lore_edit_data.splice((index-1)/2, 1)
+            }
+        }
+
+    }
+
+    $( ".droppable" ).droppable({
+      drop: drop_activation
+    });
+
 }
 
 
@@ -234,7 +328,6 @@ FV.setupEditorButtons = function(){
 
     //add fragment creation buttons
     for (var catagory in Fragment_Core.categories) {
-        console.log(catagory)
 
         $("#fragment_viewer-header_bar")
             .append("<button id='new_"+catagory+"_fragment'>New "+catagory+"</button>")
@@ -260,7 +353,7 @@ FV.setupEditorButtons = function(){
         //handle lore data aquisition
         if (type.toLowerCase() == "lore") { 
             //save lore data
-            new_data = []//FV.saveLore();
+            new_data = FV.lore_edit_data; //list of fragments
 
             current_object = FV.current_lore
 
@@ -428,8 +521,6 @@ $("#fragment_viewer-lore-edit").click(function(){
 FV.updateFragmentTree();
 FV.updateLoreTree();
 FV.setupEditorButtons();
-
-
 
 
 })

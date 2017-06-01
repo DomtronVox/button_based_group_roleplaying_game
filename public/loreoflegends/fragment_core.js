@@ -55,7 +55,6 @@ FC.createFragment = function(category, name, data, tags){
     //varify inputs
     if ( FC.categories[category] == undefined ) {return;}
 
-
     var new_fragment = {}
 
     //assign id
@@ -101,7 +100,7 @@ FC.createLore = function(name, fragments, tags){
     new_lore["name"] = name;
     
     //set fragment data
-    new_lore["fragments"] = fragments;
+    new_lore["data"] = fragments;
     new_lore["tags"] = [];
 
     //place the lore in proper lists

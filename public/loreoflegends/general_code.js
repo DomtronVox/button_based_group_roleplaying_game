@@ -16,4 +16,15 @@ $("#fragment_viewer-lore-edit_header").hide();
 //$("#fragment_viewer-lore-edit").hide();
 $("#fragment_viewer-fragment-edit").hide();
 
+
+generateRandomString = function(length) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < length; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
+
 })
