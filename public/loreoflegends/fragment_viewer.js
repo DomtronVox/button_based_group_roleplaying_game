@@ -256,13 +256,31 @@ FV.toggleLoreEdit = function() {
 
         //>create html element to contain view renderer results
         var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
-        $("#fragment_viewer-lore-display").append(
-               "<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>"
-        )
-        $("#"+html_id).draggable({helper:"clone"})
+        $("<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>")
+            .appendTo("#fragment_viewer-lore-display")
+            .draggable({helper:"clone"})
  
         //>call the render function for the fragment
         view_func(fragment, "#"+html_id);
+
+        //allow deleting the lore fragment
+        $("<button id='lore_edit-remove_fragment-"+html_id+"' class='hoverRight'>X</button>")
+            .insertBefore("#"+html_id)
+            .button()
+            .click(function(){
+                var list = $("#fragment_viewer-lore-display div");                
+                for (var index = 0; index < list.length; index++) {
+                    if (list[index].id != html_id) { continue; }
+ 
+                    //delete html elements
+                    $(this).next()[0].remove(); //remove drop area
+                    $(this).next()[0].remove(); //remove delete button
+                    $(this).remove();                
+
+                    //delete id from data
+                    FV.lore_edit_data.splice((index-1)/2, 1)
+                }
+            })
 
     }
 
@@ -282,10 +300,31 @@ FV.toggleLoreEdit = function() {
         $(this).after(
                 "<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>"
         )
-        $("#"+html_id).draggable({helper:"clone"})
+        $("#"+html_id)
+            .draggable({helper:"clone"})
+            
 
         //>call the render function for the fragment
         view_func(fragment, "#"+html_id);
+
+        //allow deleting the lore fragment
+        $("<button id='lore_edit-remove_fragment-"+html_id+"' class='hoverRight'>X</button>")
+            .insertBefore("#"+html_id)
+            .button()
+            .click(function(){
+                var list = $("#fragment_viewer-lore-display div");                
+                for (var index = 0; index < list.length; index++) {
+                    if (list[index].id != ui.draggable[0].id) { continue; }
+ 
+                    //delete html elements
+                    $("#"+ui.draggable[0].id).next()[0].remove(); //remove drop area
+                    $("#"+ui.draggable[0].id).next()[0].remove(); //remove delete button
+                    $("#"+ui.draggable[0].id).remove();                
+
+                    //delete id from data
+                    FV.lore_edit_data.splice((index-1)/2, 1)
+                }
+            })
 
         //add area where we can drop new fragments into
         $("<div class='droppable'>Drop Fragments Here To Add</div>")
@@ -307,7 +346,8 @@ FV.toggleLoreEdit = function() {
                 if (list[index].id != ui.draggable[0].id) { continue; }
  
                 //delete html elements
-                $("#"+ui.draggable[0].id).next()[0].remove();
+                $("#"+ui.draggable[0].id).next()[0].remove(); //remove drop area
+                $("#"+ui.draggable[0].id).next()[0].remove(); //remove delete button
                 $("#"+ui.draggable[0].id).remove();                
 
                 //delete id from data

@@ -29,6 +29,10 @@ lable {
     background-color: yellow;
 }
 
+.hoverRight {
+    float:right;
+
+}
 
 #editor_box {
     position: fixed;
