@@ -268,15 +268,17 @@ FV.toggleLoreEdit = function() {
             .insertBefore("#"+html_id)
             .button()
             .click(function(){
-                var list = $("#fragment_viewer-lore-display div");                
+                var list = $("#fragment_viewer-lore-display div");
+                var html_id = $(this).next()[0].id;
+
+                //delete html elements
+                $(this).next()[0].remove(); //remove drop area
+                $(this).next()[0].remove(); //remove delete button
+                $(this).remove(); 
+                
                 for (var index = 0; index < list.length; index++) {
                     if (list[index].id != html_id) { continue; }
  
-                    //delete html elements
-                    $(this).next()[0].remove(); //remove drop area
-                    $(this).next()[0].remove(); //remove delete button
-                    $(this).remove();                
-
                     //delete id from data
                     FV.lore_edit_data.splice((index-1)/2, 1)
                 }
@@ -312,15 +314,17 @@ FV.toggleLoreEdit = function() {
             .insertBefore("#"+html_id)
             .button()
             .click(function(){
-                var list = $("#fragment_viewer-lore-display div");                
-                for (var index = 0; index < list.length; index++) {
-                    if (list[index].id != ui.draggable[0].id) { continue; }
- 
-                    //delete html elements
-                    $("#"+ui.draggable[0].id).next()[0].remove(); //remove drop area
-                    $("#"+ui.draggable[0].id).next()[0].remove(); //remove delete button
-                    $("#"+ui.draggable[0].id).remove();                
+                var list = $("#fragment_viewer-lore-display div");
+                var html_id = $(this).next()[0].id;
 
+                //delete html elements
+                $(this).next()[0].remove(); //remove drop area
+                $(this).next()[0].remove(); //remove delete button
+                $(this).remove(); 
+                
+                for (var index = 0; index < list.length; index++) {
+                    if (list[index].id != html_id) { continue; }
+ 
                     //delete id from data
                     FV.lore_edit_data.splice((index-1)/2, 1)
                 }
