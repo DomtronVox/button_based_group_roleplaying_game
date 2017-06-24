@@ -17,7 +17,7 @@ var fs = require("fs");
 
 exports.RG = function() {
 
-    fs.readFile('public/race_generator/data.txt', 'utf8', function (err, data) {
+    fs.readFile('public/race_creator/race_data.txt', 'utf8', function (err, data) {
 
         if (err) throw err
 
@@ -116,7 +116,7 @@ exports.RG = function() {
 
 
         //write file
-        fs.writeFile('public/race_generator/data.js', 
+        fs.writeFile('public/race_creator/race_data.js', 
             "var race_bio_parts =" + JSON.stringify(bio_parts) +
           "\nvar race_bio_regions ="+JSON.stringify(bio_regions) +
           "\nvar race_bio_systems ="+JSON.stringify(bio_systems) +

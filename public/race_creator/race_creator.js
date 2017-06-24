@@ -1,17 +1,18 @@
 //TODO:
 // * break up code into several files
 // * use a key combo like ctrl+click to delete race parts so we don't accidentally delete things either when trying to select of by a stray click.
-// * add sorting buttons like A-Z, Z-A, By System, By Region
 // * add more filters like by system, avine/mamal (not sure how to add that), ect??(ask swords)
 // * add help button and help popup
 // * try to reduce the calls to capitalizeEachWord
 // * Do something with tissues instead of dumping them in the systems list
 // * improve efficency of the region filter (it almost noticably lags)
-// * fix issue where bioparts section resizes when the contents change
 
 
 
 $(window).load(function() {
+
+//turns on and off the query string save process
+var race_creator_standalone = race_creator_standalone || false
 
 race_creator_applet = {};
 var RCA = race_creator_applet
@@ -24,32 +25,11 @@ RCA.capitalizeEachWord = function(str) {
 }
 
 //setup help text
-$("#HelpButton").click(function(){
-    $("#HelpText").show()
+$("#editor_help_button").click(function(){
+    $("#race_help_dialog").show()
 })
 
-$("#HelpText").hide()
-
-
-//setup the tab switcher for the right side
-$("#RaceSummaryOpen").click(function(){
-    $("#SelectionInfo").hide()
-    $("#RaceSummery").show()
-
-    $("#RaceSummaryOpen").addClass("Selected")
-    $("#PartInfoOpen").removeClass("Selected")
-})
-
-$("#PartInfoOpen").click(function(){
-    $("#RaceSummery").hide()
-    $("#SelectionInfo").show()
-
-    $("#PartInfoOpen").addClass("Selected")
-    $("#RaceSummaryOpen").removeClass("Selected")
-})
-
-$("#RaceSummery").hide() //start with the race summary hidden
-$("#PartInfoOpen").addClass("Selected")
+$("#race_help_dialog").hide()
 
 
 //first part is to setup the bio-part buttons
@@ -63,14 +43,49 @@ RCA.select_onclick = function(){
     }
 }
 
-RCA.limited_select_onclick = function(){
-    if( $(this).hasClass("Selected") ){
-        $(this).removeClass("Selected");
+//adds checkboxes from a list of elements
+// takes a list of checkboxes to add, the id for the html element to add them to, and text to add as a label if the list is empty
+RCA.add_checkboxes = function(element_list, fieldset_id, empty_label){
+
+    //html template for the checkboxes
+    var labelTemplate = '<label for="#{id}">#{label}</label>'
+    var checkboxTemplate = '<input type="radio" name="'+fieldset_id+'" id="#{id}">';
+
+    //drop all content in the given html element
+    $("#"+fieldset_id).empty()
+
+    if (element_list.length > 0){
+
+        //loop through regions and add them to region select
+        for (var element in element_list) {
+            element = element_list[element]
+            
+            $("#"+fieldset_id).append(
+                  labelTemplate.replace(/#\{id\}/g, "checkbox-"+element+"_add")
+                               .replace( /#\{label\}/g, RCA.capitalizeEachWord(element) )
+            )
+
+            $("#"+fieldset_id).append(
+                  checkboxTemplate.replace(/#\{id\}/g, "checkbox-"+element+"_add")
+            )
+            $("#checkbox-"+element+"_add").checkboxradio();
+        }
+        
+    //no items listed
     } else {
-        $(this).parent().children().removeClass("Selected");
-        $(this).addClass("Selected");
+
+        $("#"+fieldset_id).append(
+                  labelTemplate.replace(/#\{id\}/g, "checkbox-"+empty_label+"_add")
+                               .replace( /#\{label\}/g, RCA.capitalizeEachWord(empty_label) )
+            )
+
+            $("#"+fieldset_id).append(
+                  checkboxTemplate.replace(/#\{id\}/g, "checkbox-"+empty_label+"_add")
+            )
+            $("#checkbox-"+empty_label+"_add").checkboxradio();
     }
 }
+
 
 //update part info window when new part is hovered
 RCA.biopart_onhover = function(){
@@ -81,80 +96,33 @@ RCA.biopart_onhover = function(){
     $("#errormsg").html("")
 
     //setup name and description fields
-    $("#NameText").text(RCA.capitalizeEachWord(part_data["name"]));
-    $("#ApearenceText").text(part_data["appearance"]);
-    $("#FunctionText").text(part_data["functional"]);
+    $("#race_creator_part_name").text(RCA.capitalizeEachWord(part_data["name"]));
+    $("#race_creator_part_appearance").text(part_data["appearance"]);
+    $("#race_creator_part_function").text(part_data["functional"]);
 
 
     //Build region select buttons. if there are no regions listed call it "regionless"
-    var region_buttons = [];
-    if (part_data["regions"].length > 0){
-
-        //loop through regions and add them to region select
-        for (var region in part_data["regions"]) {
-            region = part_data["regions"][region]
-
-            region_buttons.push({"id": region+"Add"
-                                ,"text":RCA.capitalizeEachWord(region)
-                                ,"onclick":RCA.limited_select_onclick
-            });
-        }
-
-    //no regions listed
-    } else {
-             region_buttons.push({"id": "regionnotapplicable"
-                                 ,"text":"Regionless"
-                                 ,"onclick":RCA.limited_select_onclick
-             });
-    }
-
-    //Clear buttons then add all buttons to the list
-    button_ui.clearButtonList("RegionText","");
-    button_ui.addButtonsToElement("RegionText", region_buttons);
-
+    RCA.add_checkboxes(part_data["regions"], "race_creator_select_region", "Regionless");
 
     //Setup System select buttons.
-    //TODO: just to be save we should check if there are actually any systems avalible
-    var sys_buttons = [];
-    for (system in part_data["systems"]) {
-        system = part_data["systems"][system];
-
-        sys_buttons.push({"id": system+"Add"
-                         ,"text":RCA.capitalizeEachWord(system) 
-                         ,"onclick":RCA.limited_select_onclick
-        });
-    }
+    RCA.add_checkboxes(part_data["systems"], "race_creator_select_system", "No Applicable Systems");
     
-    //Clear old buttons, Add new ones
-    button_ui.clearButtonList("SystemText","");
-    button_ui.addButtonsToElement("SystemText", sys_buttons);
-
-
     //setup the functional type buttons. They are always the same 3
-    var functional_type_buttons = [
-        { "id": "cosmetic", "text":"Cosmetic", "onclick":RCA.limited_select_onclick}
-      , { "id": "balanced", "text":"Balanced", "onclick":RCA.limited_select_onclick}
-      , { "id": "beneficial", "text":"Beneficial", "onclick":RCA.limited_select_onclick}
-    ]
+    var functional_type_buttons = ["Cosmetic", "Balanced", "Beneficial"];
+    RCA.add_checkboxes(functional_type_buttons, "race_creator_select_function", "");
 
-    //Clear old ones add new ones
-    button_ui.clearButtonList("FunctionType","");
-    button_ui.addButtonsToElement("FunctionType", functional_type_buttons);
 }
 
 RCA.createBiopartButtons = function(){
     //add a button for each part to the bioparts button list
-    var part_buttons = [];
     for (var part_name in race_bio_parts) {
-         part_buttons.push({"id": part_name
-                           ,"text": RCA.capitalizeEachWord(part_name)
-                           ,"onclick":RCA.select_onclick
-                           ,"onhover":RCA.biopart_onhover
-         });
+        $("#race_creator_bio_parts").append(
+            $('<button internal_id="'+part_name+'" id="bio_part_'+part_name+'">'+RCA.capitalizeEachWord(part_name)+'</button>')
+                .mouseover(RCA.biopart_onhover)
+                .click(RCA.select_onclick)
+                .button() //jquery-ui button styling function
+        )
     }
-
-    //add button bioparts
-    button_ui.addButtonsToElement("BioParts", part_buttons);
 }
 
 //**second part is to setup the filter buttons**
@@ -162,60 +130,126 @@ RCA.createFilterOptions = function(){
 
     //show all biopart buttons. clears other filters.
     var show_all_filter = function(){
-        $("#BioParts .Button").show();
-        $('#RegionSelect').val("all");
+        $("#race_creator_bio_parts button").show();
+        $('#race_creator_filters-region').val("any");
+        $('#race_creator_filters-system').val("any");
+        $('#race_creator_filters-tissue').val("any");
     }
 
     //show only selected parts
     var selected_filter = function(){
         show_all_filter(); //un-hide everything
 
-        $("#BioParts .Button:not(.Selected)").hide();
+        $("#race_creator_bio_parts button:not(.Selected)").hide();
     }
 
     //function that creates a region filter function for each region
     var region_filter = function(region){
         return function() {
-            $("#BioParts .Button").hide();
+            $("#race_creator_bio_parts button").hide();
 
             for (requested_part in race_bio_regions[region]) {
-                $("#BioParts .Button[internal_id="+requested_part+"]").show();
+                $("#race_creator_bio_parts button[internal_id="+requested_part+"]").show();
             }
         }
     }
+
+    var system_filter = function(system){
+
+    }
     
-    var filter_buttons = [
-     { "id": "AllFilter", "text": "Show All", "onclick":show_all_filter}
-    ,{ "id": "SelectedFilter", "text": "Show Selected", "onclick":selected_filter}
-    ];  
 
-    button_ui.addButtonsToElement("FilterButtons", filter_buttons);
+    //setup filter buttons
+    
+    $("#all_race_filter").click(show_all_filter).button() 
+    //* .button() is from jquery-ui for button styling 
 
-    //set up dropdown menu region filter
+    $("#selected_race_filter").click(selected_filter).button() 
+    //* .button() is from jquery-ui for button styling 
+
+
+    //setup dropdown filters
+    var dropdown_changed = function(){
+
+        //function to search for an element in one of the indexed lists
+        //returns true if given comparison is in given list. otherwise returns false
+        var element_search = function(comparison, part_list) {
+            //loop over part list and see if the biopart is in it.
+            var requested_part = "";
+            for (requested_part in part_list) {
+                requested_part = part_list[requested_part];
+
+                if(requested_part == comparison) return true;
+            }
+            return false;
+        }
+
+
+        //get all filter values
+        var region = $("#race_creator_filters-region").val();
+        var system = $("#race_creator_filters-system").val();
+        var tissue = $("#race_creator_filters-tissue").val();
+
+        //hide all buttons
+        $("#race_creator_bio_parts button").hide();
+
+        $.each($("#race_creator_bio_parts button"), function() {
+            var region_match, system_match, tissue_match;
+            var bio_part = $(this); //the bio_part the button represents
+            var bio_part_id = bio_part.attr("internal_id"); //id representing the part
+
+            //test region match
+            if (region == "any") region_match = true;
+            else region_match = element_search(bio_part_id, race_bio_regions[region]);
+
+            //test system match
+            if (system == "any") system_match = true;
+            else system_match = element_search(bio_part_id, race_bio_systems[system]);
+
+            //test tissue match
+            if (tissue == "any") tissue_match = true;
+            else tissue_match = element_search(bio_part_id, race_bio_tissues[tissue]);
+            
+            //If all filter criteria match show the button
+            if (region_match && system_match && tissue_match) {
+                bio_part.show()
+            }
+
+        });        
+    }
+
+    //set the above function to call when any dropdown filter is changed
+    $("#race_creator_filters-region").change(dropdown_changed);
+    $("#race_creator_filters-system").change(dropdown_changed);
+    $("#race_creator_filters-tissue").change(dropdown_changed);
+
+
+    //populate each dropdown menu with the proper options
+
+    //regions
     $.each(race_bio_regions, function(key, value) {   
-     $('#RegionSelect')
+     $('#race_creator_filters-region')
          .append($("<option></option>")
                     .attr("value",key)
                     .text(RCA.capitalizeEachWord(key))); 
     });
 
-    $("#RegionSelect").change(function(){
-        var region = $("#RegionSelect").val();
-
-        $("#BioParts .Button").hide();
-
-        $.each($("#BioParts .Button"), function() {
-            var bio_part = $(this);
-            
-            for (requested_part in race_bio_regions[region]) {
-                requested_part = race_bio_regions[region][requested_part];
-
-                if(requested_part == bio_part.attr("internal_id")) {
-                    bio_part.show();
-                }
-            }
-        });        
+    //systems
+    $.each(race_bio_systems, function(key, value) {   
+     $('#race_creator_filters-system')
+         .append($("<option></option>")
+                    .attr("value",key)
+                    .text(RCA.capitalizeEachWord(key))); 
     });
+
+    //tissues
+    $.each(race_bio_tissues, function(key, value) {   
+     $('#race_creator_filters-tissue')
+         .append($("<option></option>")
+                    .attr("value",key)
+                    .text(RCA.capitalizeEachWord(key))); 
+    });
+
 }
     
 
@@ -233,15 +267,21 @@ RCA.delete_part_onclick = function(){
     //remove element from race summery
     $(this).remove()
 
-    //update query string
-    RCA.updateQueryString()
+    //save data
+    if (race_creator_standalone == true) {
+        //update query string
+        RCA.updateQueryString()
+    } else {
+        //send data via ajax
+        //RCA.updateServerData();
+    }
 }
 
 //add an item to the race summary section
 RCA.addRacePart = function(part_data) {
     //build part string
     part_text = RCA.capitalizeEachWord(part_data["name"]) + " (";
-        
+
     for (var attr in part_data) {
         if (attr == "name") { continue; }
         part_text += RCA.capitalizeEachWord(part_data[attr]) + ", ";
@@ -252,31 +292,39 @@ RCA.addRacePart = function(part_data) {
 
     //part id for removing parts later
     var id = "RP" + RCA.race_creator_build_parts.length;
-    var region = part_data["region"] || "regionless";
+    var region = part_data["race_creator_select_region"] || "regionless";
 
-    $("#RaceSummery"+RCA.capitalizeEachWord(region))
+    region = region.replace(" ", "_").toLowerCase(); //html id's cannot have spaces
+    console.log(region)
+    $("#race_creator_summery_"+region)
         .append("<li id=\""+id+"\">"+part_text+"</li>");
-    $("#RaceSummery"+RCA.capitalizeEachWord(region)+" li")
+    $("#race_creator_summery_"+region+" li")
         .click(RCA.delete_part_onclick);
 
     //flash race summery button to indicate it has been updated
-    $("#RaceSummaryOpen").flash
+    $("#race_creator_display-summary-tab")
 
     //add part to parts list so we can generate the new save query
     RCA.race_creator_build_parts.push(part_data);
 
-    //update query string
-    RCA.updateQueryString();
+    //save data
+    if (race_creator_standalone == true) {
+        //update query string
+        RCA.updateQueryString()
+    } else {
+        //send data via ajax
+        //RCA.updateServerData();
+    }
 }
 
 RCA.setupRaceSummary = function() {
     //attach an event to add the selected part
-    $("#addRacePart").click(function() {
+    $("#race_creator_add_new_part").click(function() {
         //reset any error messages
         $("#errormsg").html("")
 
         //add apropriate error messages
-        if ($("#SelectionInfo .Selected").length < 3) {
+        if ( $("#race_creator_display-part_info input[type=radio]:checked").length < 3) {
             $("#errormsg").append("<li>Not added! You must select a \
                                     setting from each of the 3 sections below.</li>");
             return;
@@ -286,12 +334,12 @@ RCA.setupRaceSummary = function() {
         var part_data = {};
 
         //build a dictionary that contains the part's attrabutes
-        part_data["name"] = $("#NameText").text();
+        part_data["name"] = $("#race_creator_part_name").text();
         var att_name;
-        $.each($("#SelectionInfo .Selected"), function() {
-            att_name = $($(this).parent()).attr("id").replace("Text", "");
+        $.each($("#race_creator_display-part_info input[type=radio]:checked"), function() {
+            att_name = $($(this).parent()).attr("id");
 
-            part_data[att_name.toLowerCase()] = $(this).text().toLowerCase();
+            part_data[att_name.toLowerCase()] = $(this).attr("id").replace("checkbox-", "").replace("_add", "");
         });
         
         //actually add the part info to the race summery
@@ -304,13 +352,14 @@ RCA.setupRaceSummary = function() {
     //add the Race part region headers.    
     var i = 0;
     for(region in race_bio_regions) {
-        var side_to_add = "#racePartBuildLeft"
+        var side_to_add = "#race_creator_chosen_parts-left"
 
         //everything in the upper half of the list gets added to the right hand column
-        if(i > Object.keys(race_bio_regions).length/2){ side_to_add = "#racePartBuildRight"; }
+        if(i > Object.keys(race_bio_regions).length/2){ side_to_add = "#race_creator_chosen_parts-right"; }
 
         $(side_to_add).append("<h4>"+RCA.capitalizeEachWord(region)+"</h4>")
-                      .append("<ul id=\"RaceSummery"+RCA.capitalizeEachWord(region)+"\"></ul>")
+                              //html id's cannot have spaces
+                      .append("<ul id=\"race_creator_summery_"+region.replace(" ", "_")+"\"></ul>")
         
         //increment count used to determin column
         i++;
@@ -424,7 +473,7 @@ RCA.updateQueryString = function() {
     $("#RaceURL").val(document.location.href);
 }
 
-RCA.loadRace = function() {
+RCA.loadFromQueryString = function() {
     //see if there is a query string with race info.
     var loaded_race = RCA.parseRaceFromQuery( document.location.search.substring(1) )
 
@@ -454,6 +503,15 @@ RCA.loadRace = function() {
 RCA.createBiopartButtons();
 RCA.createFilterOptions();
 RCA.setupRaceSummary();
-RCA.loadRace();
+
+//Load data
+if (race_creator_standalone == true) {
+    //load data from the query string
+    RCA.loadFromQueryString();
+} else {
+    //load data via ajax
+    //RCA.loadFromServerData();
+}
+
 
 });

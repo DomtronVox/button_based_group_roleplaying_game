@@ -1,0 +1,139 @@
+<html>
+
+<head>
+  <title>Anomaly Content Creator - Button Based Pen And Paper Games</title>
+
+  <!--general styling -->
+  <link rel="stylesheet" type="text/css" href="/css/columns.css" />
+  <link rel="stylesheet" type="text/css" href="general_styles.css" />
+
+  <!-- 3rd party js scripts and styles-->
+  <script src="/scripts/jquery.js"></script>
+
+  <link rel="stylesheet" type="text/css" href="/css/jquery-ui.css" />
+  <script src="/scripts/jquery-ui.js"></script>
+  
+  <link rel="stylesheet" type="text/css" href="/css/jstree-default-theme/style.css" />
+  <script src="/scripts/jstree.js"></script>
+  
+
+  <!-- local custom scripts and styles --> 
+  <script src="general_code.js"></script>
+
+  <script src="race_creator.js"></script>
+  <script src="race_data.js"></script>
+  <link rel="stylesheet" type="text/css" href="race_creator.css" />
+  
+
+
+</head>
+
+<body>
+
+  <!-- header bar used for all the editors -->
+  <fieldset id="editor_header_bar" class="ColumnFull">
+      <button id="editor_help_button">Help</button>
+      <button id="editor_save_button">Save</button>
+  </fieldset>
+
+  <!-- Interface for the Race creator -->
+  <div id="race_creator">
+    <div class="ColumnFourth ColumnHeightStretch">
+
+      <fieldset id="race_creator_filters">
+        <legend>Filters</legend>
+
+          <lable>Filter by Region: </lable> 
+          <br />
+          <select id="race_creator_filters-region">
+              <option value="any">Any</option>
+          </select>
+          <br />
+          <lable>Filter by System: </lable>
+          <br />
+          <select id="race_creator_filters-system">
+              <option value="any">Any</option>
+          </select>
+          <br />
+          <lable>Filter by Tissue: </lable>
+          <br />
+          <select id="race_creator_filters-tissue">
+              <option value="any">Any</option>
+          </select>
+          <br />          
+
+          <button id="all_race_filter">Show All</button>
+          <br />
+          <button id="selected_race_filter">Show Selected</button>
+
+          <div id="race_filter_buttons"></div>
+      </fieldset>
+
+      <fieldset>
+          <legend>Check List</legend>
+          <div id="check_list" ></div>
+      </fieldset>
+    </div>
+
+
+    <fieldset class="ColumnFourth ColumnHeightStretch">
+      <legend>Biological Parts</legend>
+      <div id="race_creator_bio_parts"> 
+      </div>
+    </fieldset>
+
+    <div id="race_creator_display" class="ColumnHalf TabArea ColumnHeightStretch">
+      <ul id="race_creator_display_tabs"> 
+          <li id="race_creator_display-summary-tab"><a href="#race_creator_display-summary">Race Summary</a></li> 
+          <li id="race_creator_display-part_info-tab"><a href="#race_creator_display-part_info">Part Information</a></li> 
+      </ul>
+
+      <div class="TabAreaScroll">
+      <div id="race_creator_display-summary" class="">
+          
+          <div><label>Race name:</label> <input id="race_creator_race_name" type="text"></input></div>
+          <div>
+              <p>Race Parts</p>
+              <div id="race_creator_chosen_parts-left" class="ColumnHalf"><ul></ul></div>
+              <div id="race_creator_chosen_parts-right" class="ColumnHalf"><ul></ul></div>
+          </div>
+      </div>
+
+      <div id="race_creator_display-part_info">
+          <h4>Part Information (hover parts button to display)</h4>
+
+          <lable>Name: </lable><span id="race_creator_part_name"></span>
+          <br /><br />
+          <lable>Appearance: </lable><span id="race_creator_part_appearance"></span>
+          <br /><br />
+          <lable>Function: </lable><span id="race_creator_part_function"></span>
+          <br /><br />
+
+          <ul id="errormsg"></ul>
+          <button id="race_creator_add_new_part">Add Part</button>
+
+          <div style="height=20px">
+              <fieldset class="ColumnFourth">
+                  <legend>Body Regions</legend>
+                  <div id="race_creator_select_region" class="ControlGroup"></div>
+              </fieldset>
+
+              <fieldset class="ColumnFourth">
+                  <legend>Systems</legend>
+                  <div id="race_creator_select_system" class="ControlGroup"></div>
+              </fieldset>
+
+              <fieldset class="ColumnFourth">
+                  <legend>Functionality</legend>
+                  <div id="race_creator_select_function" class="ControlGroup"></div>
+              </fieldset>
+          </div>
+
+          
+      </div>
+      </div>
+
+    </div>
+  </div>
+
+</body>
