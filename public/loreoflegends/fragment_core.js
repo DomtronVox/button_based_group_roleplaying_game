@@ -113,6 +113,8 @@ FC.createLore = function(name, fragments, tags){
         FC.addTag(FC.lore_id, tag, "lore")
     }
 
+    return new_lore["id"];
+
 }
 
 //adds a tag to either fragments or lore
