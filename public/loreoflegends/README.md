@@ -52,3 +52,17 @@ Following is a list of Views and the fragment categories they render:
 As stated before, each piece of Lore is a container for fragments. Fragments can belong to multiple pieces of Lore. For example a Map of a Continent could be used in several different pieces of Lore one with a list of cities for one nation, a second with a list for another nation, and a third that describes the areas flora live in.
 
 The Lore viewer works by running each of the fragments in it through their respective view function and then merges them into one page. 
+
+
+#TODO
+
+* If a lore is selected and one of it's fragments is edited, the lore does not get updated unless you reselect it.
+* If you click the save only button when editing a lore, the fragments are all re-rendered causing the edit parts to be removed. 
+     * saving only regenerates the lore tree, which causes the node to be reselected, which causes the fragments to be re rendered.
+* When dragging a fragment the text gets hidden behind the tabs section.
+* Clicking create lore while editing a lore already causes the edited lore data to be lost.
+* Need a way to delete fragments and lore.
+* When creating a new fragment, if you save then immediatly save&exit there are two fragments created.
+
+
+
