@@ -229,88 +229,18 @@ FV.showEditorBox = function(catagory, data){
 }
 
 
-//switch lore tab into edit mode
-FV.toggleLoreEdit = function() {
-
-    if (FV.current_lore == null) { return;}
-
-    $("#fragment_viewer-lore-edit_header").show();
-    $("#fragment_viewer-lore-edit").hide();
-
-    $("#lore-edit_header-name_string").val(FV.current_lore.name);
-    $("#lore-edit_header-tag_string").val(FV.current_lore.tags.join(','));
-
-    $("#fragment_viewer-lore-display").html("");
-
-    FV.lore_edit_data = FV.current_lore.data;
-
-    for (var index in FV.current_lore.data) {
-        var fragment_id = FV.current_lore.data[index];
-
-        //add area where we can drop new fragments into
-        $("#fragment_viewer-lore-display").append("<div class='droppable'>Drop Fragments Here To Add</div>");
-        
-        //add fragment preview
-        var fragment = Fragment_Core.fragments[fragment_id];
-        var view_func = Fragment_Core.categories[fragment.category].views.default;
-
-        //>create html element to contain view renderer results
-        var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
-        $("<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>")
-            .appendTo("#fragment_viewer-lore-display")
-            .draggable({helper:"clone"})
- 
-        //>call the render function for the fragment
-        view_func(fragment, "#"+html_id);
-
-        //allow deleting the lore fragment
-        $("<button id='lore_edit-remove_fragment-"+html_id+"' class='hoverRight'>X</button>")
-            .insertBefore("#"+html_id)
-            .button()
-            .click(function(){
-                var list = $("#fragment_viewer-lore-display div");
-                var html_id = $(this).next()[0].id;
-
-                //delete html elements
-                $(this).next()[0].remove(); //remove drop area
-                $(this).next()[0].remove(); //remove delete button
-                $(this).remove(); 
+//adds a fragment with all lore fragment edits
+FV.addFragmentEditSection = function(fragment_id, html_id) {
                 
-                for (var index = 0; index < list.length; index++) {
-                    if (list[index].id != html_id) { continue; }
- 
-                    //delete id from data
-                    FV.lore_edit_data.splice((index-1)/2, 1)
-                }
-            })
-
-    }
-
-    $("#fragment_viewer-lore-display").append("<div class='droppable'>Drop Fragments Here To Add</div>");
-
-    var drop_activation = function( event, ui ) {
-        var fragment_id = $("#"+ui.draggable[0].id).attr("internal_id");
-
-        if (fragment_id == undefined) { return;}
-
         //add fragment preview
         var fragment = Fragment_Core.fragments[fragment_id];
         var view_func = Fragment_Core.categories[fragment.category].views.default;
-
-        //>create html element to contain view renderer results
-        var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
-        $(this).after(
-                "<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>"
-        )
-        $("#"+html_id)
-            .draggable({helper:"clone"})
-            
 
         //>call the render function for the fragment
         view_func(fragment, "#"+html_id);
 
         //allow deleting the lore fragment
-        $("<button id='lore_edit-remove_fragment-"+html_id+"' class='hoverRight'>X</button>")
+        $("<button id='lore_edit-remove_fragment-"+html_id+"' class='hoverRight removeFragment'>X</button>")
             .insertBefore("#"+html_id)
             .button()
             .click(function(){
@@ -333,7 +263,25 @@ FV.toggleLoreEdit = function() {
         //add area where we can drop new fragments into
         $("<div class='droppable'>Drop Fragments Here To Add</div>")
                 .insertAfter("#"+html_id)
-                .droppable({drop: drop_activation});
+                .droppable({drop: FV.fragmentDropCallback});
+    }
+
+//callback for when a fragment is dropped onto and lore edit droppable area
+FV.fragmentDropCallback = function( event, ui ) {
+        var fragment_id = $("#"+ui.draggable[0].id).attr("internal_id");
+
+        if (fragment_id == undefined) { return;}
+
+        //create html element to contain fragment renderer results
+        var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
+        $(this).after(
+            "<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>");
+        $("#"+html_id)
+            .draggable({helper:"clone"})
+
+
+        //add fragment and associated tools to lore editor
+        FV.addFragmentEditSection(fragment_id, html_id)
 
 
         var list = $("#fragment_viewer-lore-display div");
@@ -361,9 +309,39 @@ FV.toggleLoreEdit = function() {
 
     }
 
-    $( ".droppable" ).droppable({
-      drop: drop_activation
-    });
+//switch lore tab into edit mode
+FV.toggleLoreEdit = function() {
+
+
+    if (FV.current_lore == null) { return;}
+
+    $("#fragment_viewer-lore-edit_header").show();
+    $("#fragment_viewer-lore-edit").hide();
+
+    $("#lore-edit_header-name_string").val(FV.current_lore.name);
+    $("#lore-edit_header-tag_string").val(FV.current_lore.tags.join(','));
+
+    $("#fragment_viewer-lore-display").html("");
+
+    FV.lore_edit_data = FV.current_lore.data;
+
+    //add 1st area where we can drop new fragments into
+    $("<div class='droppable'>Drop Fragments Here To Add</div>")
+        .appendTo("#fragment_viewer-lore-display")
+        .droppable({ drop: FV.fragmentDropCallback });
+
+    for (var index in FV.current_lore.data) {
+        var fragment_id = FV.current_lore.data[index];
+
+        //create html element to contain view renderer results
+        var html_id = "lore_edit-fragment-" + fragment_id + "-" + generateRandomString(6);
+        $("<div id='"+html_id+"' class='draggable' internal_id='"+fragment_id+"'></div>")
+            .appendTo("#fragment_viewer-lore-display")
+            .draggable({helper:"clone"})
+
+        //add fragment and associated tools to lore editor
+        FV.addFragmentEditSection(fragment_id, html_id)
+    }
 
 }
 
@@ -476,9 +454,12 @@ FV.setupEditorButtons = function(){
             $("#lore-edit_header-name_string").val("");
             $("#lore-edit_header-tag_string").val("");
 
-            //$("#editor_box-contents").html("");
+            $("#editor_box-contents").html("");
             $("#fragment_viewer-lore-edit_header").hide();
             $("#fragment_viewer-lore-edit").show();
+
+            $("#fragment_viewer-lore .ui-droppable").remove();
+            $("#fragment_viewer-lore .removeFragment").remove();
 
         } else {
             $("#editor_box-name_string").val("");
@@ -521,11 +502,21 @@ FV.setupEditorButtons = function(){
         if (exit) { exitEditor("lore");}
     })
 
+    
+
+
+    $("#new_lore_button").click(function() {
+
+        var id = Fragment_Core.createLore("Unnamed Lore", [], ["everything"]);
+        
+        FV.current_lore = Fragment_Core.lore[id];
+        FV.lore_edit_data = FV.current_lore.data;
+
+        FV.toggleLoreEdit();
+
+    })
+    
 }
-
-
-
-
 
 
 var f1 = Fragment_Core.createFragment( "description", "rise of dolathma"
