@@ -57,6 +57,18 @@ FV.buildNodesFromIDList = function(list, type) {
 }
 
 
+//aquires a fragments view render function and runs it
+FV.renderFragment = function(fragment_id, render_container) {
+
+    var fragment = Fragment_Core.fragments[fragment_id];
+    var view_func = Fragment_Core.categories[fragment.category].views.default;
+
+    //call the render function for the fragment
+    view_func(fragment, render_container);
+
+}
+
+
 //update fragment tree contents based on current fragment core data
 //TODO rewrite
 FV.updateFragmentTree = function() {
@@ -103,24 +115,17 @@ FV.updateFragmentTree = function() {
     $("#fragment_list-tree").jstree(true).refresh();
 
 
-    $("#fragment_list-tree").on("changed.jstree", function(e, data) {
-
-        //only handle specific actions
-        if (data.action != "select_node") { return; }
+    $("#fragment_list-tree").on("activate_node.jstree", function(e, data) { //changed.jstree
 
         var fragment_id = data.node.a_attr["internal_id"];
 
         //some tree nodes are organizational and so have no fragment id so we ignore them
         if (fragment_id != undefined) {
-            var fragment = Fragment_Core.fragments[fragment_id];
-            var view_func = Fragment_Core.categories[fragment.category].views.default;
-
             //set editor variables
-            FV.current_fragment = fragment;
-            FV.current_fragment_catagory = fragment.category; 
+            FV.current_fragment = Fragment_Core.fragments[fragment_id];
+            FV.current_fragment_catagory = FV.current_fragment.category; 
 
-            //call the render function for the fragment
-            view_func(fragment, "#fragment_viewer-fragment-display");
+            FV.renderFragment(fragment_id, "#fragment_viewer-fragment-display");
 
             //switches focus to the fragment viewer tab so the user does not get lost
             $( "#fragment_display" ).tabs( {active: 2} )
@@ -165,14 +170,11 @@ FV.updateLoreTree = function() {
     $("#lore_list-tree").jstree(true).settings.core.data = data_tree;
     $("#lore_list-tree").jstree(true).refresh();
 
-    $("#lore_list-tree").on("changed.jstree", function(e, data) {
-
-        //only handle specific actions
-        if (data.action != "select_node") { return; }
+    $("#lore_list-tree").on("activate_node.jstree", function(e, data) { //changed.jstree
 
         var lore_id = data.node.a_attr["internal_id"];
 
-        //some tree nodes are organizational and so have no lore id so we ignore them
+        //some tree nodes are organizational and have no lore id so we ignore them
         if (lore_id != undefined) {
             FV.current_lore = Fragment_Core.lore[lore_id];
 
@@ -182,20 +184,19 @@ FV.updateLoreTree = function() {
             for (var index in FV.current_lore.data) {
                 var fragment_id = FV.current_lore.data[index];
 
-                var fragment = Fragment_Core.fragments[fragment_id];
-                var view_func = Fragment_Core.categories[fragment.category].views.default;
-
                 //create html element to contain view renderer results
                 var html_id = "lore_viewer-fragment-" + fragment_id + "-" + generateRandomString(6);
                 $("#fragment_viewer-lore-display").append("<div id='"+html_id+"'></div>")
 
                 //call the render function for the fragment
-                view_func(fragment, "#"+html_id);
+                FV.renderFragment(fragment_id, "#"+html_id);
 
             }
 
             //switches focus to the fragment viewer tab so the user does not get lost
             $( "#fragment_display" ).tabs( {active: 0} )
+
+            $("#fragment_viewer-lore-edit").show();
 
         }
 
@@ -232,12 +233,9 @@ FV.showEditorBox = function(catagory, data){
 //adds a fragment with all lore fragment edits
 FV.addFragmentEditSection = function(fragment_id, html_id) {
                 
-        //add fragment preview
-        var fragment = Fragment_Core.fragments[fragment_id];
-        var view_func = Fragment_Core.categories[fragment.category].views.default;
 
         //>call the render function for the fragment
-        view_func(fragment, "#"+html_id);
+        FV.renderFragment(fragment_id, "#"+html_id);
 
         //allow deleting the lore fragment
         $("<button id='lore_edit-remove_fragment-"+html_id+"' class='hoverRight removeFragment'>X</button>")
@@ -440,7 +438,7 @@ FV.setupEditorButtons = function(){
             }
         }
 
-        //regenerate tree
+        //regenerate tree and other data
         if (type.toLowerCase() == "lore") { 
             FV.updateLoreTree();
         } else {
@@ -467,6 +465,9 @@ FV.setupEditorButtons = function(){
 
             $("#editor_box-contents").html("");
             $("#editor_box").hide();
+
+            //call the render function for the fragment
+            FV.renderFragment(FV.current_fragment.id, "#fragment_viewer-fragment-display");
             
         }
     }

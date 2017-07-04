@@ -13,7 +13,7 @@ $(".ControlGroup").controlgroup();
 //hide the Editor right off the bat
 $("#editor_box").hide();
 $("#fragment_viewer-lore-edit_header").hide();
-//$("#fragment_viewer-lore-edit").hide();
+$("#fragment_viewer-lore-edit").hide();
 $("#fragment_viewer-fragment-edit").hide();
 
 
