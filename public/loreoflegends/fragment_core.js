@@ -238,5 +238,34 @@ FC.fragmentFilter = function(id_list, category, tags){
 
 }
 
+//Saves all data to a downloadable file and tells the browser to download it
+//  Credit: Matěj Pokorný https://stackoverflow.com/a/18197511
+//  Modified.
+FC.downloadJsonData = function(filename) {
+
+    //if filename is not defined give sane default
+    if (filename == undefined){
+        filename = "SavedWorldLore.json"
+    }
+
+    var data = {"fragment_id": FC.fragment_id, "fragments": FC.fragments, 
+                "tagged_fragments": FC.tagged_fragments,
+                "lore_id": FC.lore_id, "lore": FC.lore, "tagged_lore": FC.tagged_lore  }
+    var data_str = encodeURIComponent( JSON.stringify( data ) );
+
+    var pom = document.createElement('a');
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + data_str);
+    pom.setAttribute('download', filename);
+
+    if (document.createEvent) {
+        var event = document.createEvent('MouseEvents');
+        event.initEvent('click', true, true);
+        pom.dispatchEvent(event);
+    }
+    else {
+        pom.click();
+    }
+}
+
 
 })
