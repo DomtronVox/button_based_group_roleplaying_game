@@ -139,7 +139,7 @@ FV.updateFragmentTree = function() {
 
     $("#fragment_list-tree").on("after_open.jstree", function(e, data) {
         //allow dragging fragments
-        $(".draggable").draggable({helper: "clone"});
+        $(".draggable").draggable({helper: "clone", appendTo: "body"});
     })
     
 }
