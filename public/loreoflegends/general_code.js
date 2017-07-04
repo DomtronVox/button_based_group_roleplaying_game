@@ -28,3 +28,10 @@ generateRandomString = function(length) {
 }
 
 })
+
+//capatalize the first letter of each word
+capitalizeEachWord = function(str) {
+    return str.replace(/\w\S*/g, function(txt) {
+        return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+}

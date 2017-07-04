@@ -350,7 +350,7 @@ FV.setupEditorButtons = function(){
     for (var catagory in Fragment_Core.categories) {
 
         $("#new_fragment_select")
-            .append("<option value='"+catagory+"'>New "+catagory+"</button>")
+            .append("<option value='"+catagory+"'>New "+capitalizeEachWord(catagory)+"</button>")
 
     }
 
@@ -360,7 +360,9 @@ FV.setupEditorButtons = function(){
             var catagory = $("#new_fragment_select").val();
 
             //reset select to the default because we want that always showing
-            $("#new_fragment_select").val("default");
+            $("#new_fragment_select")
+                .val("default")
+                .selectmenu("refresh");
 
             //change editor data since this is a new fragment
             FV.current_fragment_catagory = catagory;
@@ -475,8 +477,9 @@ FV.setupEditorButtons = function(){
             $("#editor_box").hide();
 
             //call the render function for the fragment
-            FV.renderFragment(FV.current_fragment.id, "#fragment_viewer-fragment-display");
-            
+            if (FV.current_fragment != undefined) {
+                FV.renderFragment(FV.current_fragment.id, "#fragment_viewer-fragment-display");
+            }    
         }
     }
 
