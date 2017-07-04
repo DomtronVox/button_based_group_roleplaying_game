@@ -128,7 +128,7 @@ FV.updateFragmentTree = function() {
             FV.renderFragment(fragment_id, "#fragment_viewer-fragment-display");
 
             //switches focus to the fragment viewer tab so the user does not get lost
-            $( "#fragment_display" ).tabs( {active: 2} )
+            $( "#fragment_display" ).tabs( {active: 1} )
 
             $("#fragment_viewer-fragment-edit").show();
 
@@ -370,6 +370,25 @@ FV.setupEditorButtons = function(){
 
             FV.showEditorBox(FV.current_fragment_catagory, FV.current_fragment);
         })
+
+    //setup data operations actions
+    $("#data_menu")
+        .on("selectmenuchange", function(event){
+            var selection = $("#data_menu").val();
+
+            //reset select to the default because we want that always showing
+            $("#data_menu")
+                .val("default")
+                .selectmenu("refresh");
+
+            if (selection == "export_json") {
+                Fragment_Core.downloadJsonData();
+            } else if (selection == "import_json") {
+                Fragment_Core.uploadJsonData();
+            }
+    })
+
+
 
     //setup editor save and exit buttons
     

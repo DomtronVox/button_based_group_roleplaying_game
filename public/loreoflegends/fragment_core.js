@@ -267,6 +267,33 @@ FC.downloadJsonData = function(filename) {
     }
 }
 
+FC.uploadJsonData = function() {
 
+    var pom = document.createElement('input');
+    pom.setAttribute('type', 'file');
+
+    
+    pom.onchange = function(event) {
+        var reader = new FileReader();
+
+        reader.onload = function(event){
+            var data = JSON.parse(event.target.result);
+            
+            FC.fragment_id = data.fragment_id;
+            FC.lore_id = data.lore_id;
+
+            FC.fragments = data.fragments;
+            FC.tagged_fragments = data.tagged_fragments;
+
+            FC.lore = data.lore;
+            FC.tagged_lore = data.tagged_lore;
+        }
+ 
+        reader.readAsText(event.target.files[0]);
+    }
+
+    pom.click();
+
+}
 
 })

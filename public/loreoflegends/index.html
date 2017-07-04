@@ -40,9 +40,14 @@
           <select id="new_fragment_select">
               <option value="default">Create Fragment</option>
           </select>
-<!--          <button id="new_date_button">New Date</button>
-          <button id="new_race_button">New Race/Species</button>
-          <button id="new_designed_button">New Design</button> -->
+
+          <div style="float:right;">
+          <select id="data_menu">
+              <option value="default">Import/Export</option>
+              <option value="export_json">Export To Json File</option>
+              <option value="import_json">Import From Json File</option>
+          </select>
+          </div>
       </fieldset>
 
       <div class="ColumnFourth ColumnHeightStretch">
@@ -63,8 +68,8 @@
       <div id="fragment_display" class="TabArea ColumnThreeFourths ColumnHeightStretch">
           <ul id="fragment_viewer_tabs"> 
               <li><a href="#fragment_viewer-lore">Lore Viewer</a></li> 
-              <li><a href="#fragment_viewer-timeline">Timeline</a></li>
               <li><a href="#fragment_viewer-fragment">Fragment Viewer</a></li> 
+              <!-- <li><a href="#fragment_viewer-timeline">Timeline</a></li> -->
           </ul>
 
           <div class="TabAreaScroll">
@@ -91,12 +96,12 @@
                   <div id="fragment_viewer-lore-display"></div>
               </div>
 
-              <div id="fragment_viewer-timeline"></div>
-
               <div id="fragment_viewer-fragment">
                   <button id="fragment_viewer-fragment-edit">Edit Fragment</button>
                   <div id="fragment_viewer-fragment-display"></div>
               </div>
+
+              <!-- <div id="fragment_viewer-timeline"></div> -->
           </div>
       </div>
 
