@@ -204,7 +204,7 @@ FV.updateLoreTree = function() {
 }
 
 
-//##############################
+//#################################################
 //# Fragment and Lore Editor setup and manipulation
 
 
@@ -346,22 +346,28 @@ FV.toggleLoreEdit = function() {
 
 FV.setupEditorButtons = function(){
 
-    //add fragment creation buttons
+    //add fragment creation options
     for (var catagory in Fragment_Core.categories) {
 
-        $("#fragment_viewer-header_bar")
-            .append("<button id='new_"+catagory+"_fragment'>New "+catagory+"</button>")
+        $("#new_fragment_select")
+            .append("<option value='"+catagory+"'>New "+catagory+"</button>")
 
-        $("#new_"+catagory+"_fragment")
-            .button() //style the button
-            .click(function(){
-                //change editor data since this is a new fragment
-                FV.current_fragment_catagory = catagory;
-                FV.current_fragment = null;
-
-                FV.showEditorBox(FV.current_fragment_catagory, FV.current_fragment);
-            })
     }
+
+    $("#new_fragment_select")
+        .on("selectmenuchange", function(){
+            //get the catagory
+            var catagory = $("#new_fragment_select").val();
+
+            //reset select to the default because we want that always showing
+            $("#new_fragment_select").val("default");
+
+            //change editor data since this is a new fragment
+            FV.current_fragment_catagory = catagory;
+            FV.current_fragment = null;
+
+            FV.showEditorBox(FV.current_fragment_catagory, FV.current_fragment);
+        })
 
     //setup editor save and exit buttons
     
@@ -433,8 +439,10 @@ FV.setupEditorButtons = function(){
             if (type.toLowerCase() == "lore") { 
                 Fragment_Core.createLore(name_str, new_data, new_tags)
             } else {
-                Fragment_Core
+                var fragment_id = Fragment_Core
                     .createFragment( FV.current_fragment_catagory, name_str, new_data, new_tags);
+
+                FV.current_fragment = Fragment_Core.fragments[fragment_id];
             }
         }
 

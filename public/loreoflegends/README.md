@@ -60,6 +60,5 @@ The Lore viewer works by running each of the fragments in it through their respe
 * When dragging a fragment the text gets hidden behind the tabs section.
 * Clicking create lore while editing a lore already causes the edited lore data to be lost.
 * Need a way to delete fragments and lore.
-* When creating a new fragment, if you save then immediatly save&exit there are two fragments created.
 
 
