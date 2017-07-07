@@ -58,6 +58,12 @@ The Lore viewer works by running each of the fragments in it through their respe
 
 * If a lore is selected and one of it's fragments is edited, the lore does not get updated unless you reselect it.
 * Clicking create lore while editing a lore already causes the edited lore data to be lost.
-* Need a way to delete fragments and lore.
+* Think about rewritting Lore to be a special type of tag.
+* Improve export and import code.
+    * need checks to make sure the file is valid
+    * need some way to set type of import (i.e. is it a full load overwritting everything or are we just importing a single fragment
+    * Look into uploading other file types like text and creating a fragment for it.
+* Need warnings about lost data when importing a json file and quitting the tab.
+* Look into adding an electron app download.
 
 
