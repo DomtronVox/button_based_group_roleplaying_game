@@ -394,7 +394,10 @@ FV.setupEditorButtons = function(){
             if (selection == "export_json") {
                 Fragment_Core.downloadJsonData();
             } else if (selection == "import_json") {
-                Fragment_Core.uploadJsonData();
+                Fragment_Core.uploadJsonData(function(){
+                    FV.updateFragmentTree();
+                    FV.updateLoreTree();
+                });
             }
     })
 

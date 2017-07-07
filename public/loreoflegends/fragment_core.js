@@ -320,7 +320,7 @@ FC.downloadJsonData = function(filename) {
 }
 
 //allows a file to be uploaded which replaces current data.
-FC.uploadJsonData = function() {
+FC.uploadJsonData = function(done) {
 
     var pom = document.createElement('input');
     pom.setAttribute('type', 'file');
@@ -340,6 +340,8 @@ FC.uploadJsonData = function() {
 
             FC.lore = data.lore;
             FC.tagged_lore = data.tagged_lore;
+
+            done();
         }
  
         reader.readAsText(event.target.files[0]);
