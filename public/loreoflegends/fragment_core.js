@@ -67,6 +67,7 @@ FC.createFragment = function(category, name, data, tags){
     //>deep copy the default data values
     new_fragment["data"] = jQuery.extend(true, {}, FC.categories[category]["data"]);
     new_fragment["tags"] = [];
+    new_fragment["lore"] = [];
 
     //merge in valid data changes
     for ( var key in data ) {
@@ -87,6 +88,41 @@ FC.createFragment = function(category, name, data, tags){
     }
 
     return FC.fragment_id;
+}
+
+//removes a fragment with the given fragment id
+FC.deleteFragment = function(id){
+    if (FC.fragments[id] == undefined) return
+    var fragment = FC.fragments[id];
+
+    //remove fragment id from all tags 
+    var tags_list = jQuery.extend(true, [], fragment.tags);
+    for ( var index in tags_list ) {
+        var tag = tags_list[index];
+
+        FC.removeTag(id, tag, "fragment")
+    }
+
+    //remove fragment id from all included lore 
+    var lore_list = jQuery.extend(true, [], fragment.lore);
+    for ( var index in lore_list ) {
+        var lore_id = lore_list[index];
+
+        var index = FC.lore[lore_id].data.findIndex(
+            function(tag_iter) {return tag_iter == id;}
+        )
+        FC.lore[lore_id].data.splice(index, 1);
+    }
+
+    //remove fragment id from catagory fragment list
+    var cat_frags = Fragment_Core.categories[fragment.category].fragments;
+    var index = cat_frags.findIndex(
+                    function(tag_iter) {return tag_iter == fragment.id;}
+                )
+    cat_frags.splice(index, 1);
+
+    //remove fragment
+    delete FC.fragments[id];
 }
 
 //creates a new lore using given information
@@ -115,6 +151,22 @@ FC.createLore = function(name, fragments, tags){
 
     return new_lore["id"];
 
+}
+
+//removes a lore with the given lore id
+FC.deleteLore = function(id){
+    if (FC.lore[id] == undefined) return
+
+    //remove fragment id from all tags
+    var tags_list = jQuery.extend(true, [], FC.lore[id].tags); 
+    for ( var index in tags_list ) {
+        var tag = tags_list[index];
+
+        FC.removeTag(id, tag, "lore")
+    }
+
+    //remove fragment
+    FC.fragments[id] = undefined;
 }
 
 //adds a tag to either fragments or lore
@@ -267,6 +319,7 @@ FC.downloadJsonData = function(filename) {
     }
 }
 
+//allows a file to be uploaded which replaces current data.
 FC.uploadJsonData = function() {
 
     var pom = document.createElement('input');

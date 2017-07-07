@@ -101,8 +101,8 @@ FV.updateFragmentTree = function() {
         var tag_node = FV.buildTreeNode(tag, null);
 
         //create child nodes from each fragment in the catagory
-        tag_list = Fragment_Core.tagged_fragments[tag]
-        tag_node.children = FV.buildNodesFromIDList(tag_list)
+        var fragment_list = Fragment_Core.tagged_fragments[tag]
+        tag_node.children = FV.buildNodesFromIDList(fragment_list)
         
         //add the catagory node to the tree dataset
         tags_root.children.push(tag_node);
@@ -253,8 +253,14 @@ FV.addFragmentEditSection = function(fragment_id, html_id) {
                 for (var index = 0; index < list.length; index++) {
                     if (list[index].id != html_id) { continue; }
  
-                    //delete id from data
+                    //delete fragment id from lore data
                     FV.lore_edit_data.splice((index-1)/2, 1)
+
+                    //delete lore id from fragment
+                    var index = Fragment_Core.fragments[fragment_id].lore.findIndex(
+                        function(tag_iter) {return tag_iter == FV.current_lore.id;}
+                    )
+                    Fragment_Core.fragments[fragment_id].lore.splice(index, 1);
                 }
             })
 
@@ -281,12 +287,16 @@ FV.fragmentDropCallback = function( event, ui ) {
         //add fragment and associated tools to lore editor
         FV.addFragmentEditSection(fragment_id, html_id)
 
-
+        //add fragment id to lore and lore id to the fragment's lore list
         var list = $("#fragment_viewer-lore-display div");
         for (var index = 0; index < list.length; index++) {
             if (list[index].id != html_id) { continue; }
 
+            //add fragment id to the proper location in the lore list
             FV.lore_edit_data.splice((index-1)/2, 0, ui.draggable[0].getAttribute("internal_id"))
+            
+            //add lore id to the fragment
+            Fragment_Core.fragments[fragment_id].lore.push(FV.current_lore.id);
         }
 
         //if we are just rearanging a current fragment we need to remove the old one
@@ -502,6 +512,7 @@ FV.setupEditorButtons = function(){
         }
     }
 
+
     //setup editor buttons
     $("#editor-save").click(function() { 
         saveEditor("fragment");
@@ -515,6 +526,18 @@ FV.setupEditorButtons = function(){
     $("#editor-exit").click(function() {
         var exit = confirm("Are you sure? You will loose all unsaved data.")
         if (exit) { exitEditor("fragment");}
+    })
+
+    $("#editor-delete").click(function() {
+        var _delete = confirm("Are you sure you want to delete? This Fragment will be compleatly removed forever.")
+        if (_delete && FV.current_fragment != undefined) { 
+            exitEditor("fragment");
+            Fragment_Core.deleteFragment(FV.current_fragment.id);
+
+            $("#fragment_viewer-fragment-edit").hide();
+            $("#fragment_viewer-fragment-display").html("");
+            FV.updateFragmentTree();
+        }
     })
 
 
@@ -533,7 +556,17 @@ FV.setupEditorButtons = function(){
         if (exit) { exitEditor("lore");}
     })
 
-    
+    $("#lore-delete").click(function() {
+        var _delete = confirm("Are you sure you want to delete? This lore will be compleatly removed forever.")
+        if (_delete && FV.current_lore != undefined) { 
+            Fragment_Core.deleteLore(FV.current_lore.id);
+            exitEditor("lore");
+
+            $("#fragment_viewer-lore-edit").hide();
+            $("#fragment_viewer-lore-display").html("");
+            FV.updateLoreTree();
+        }
+    })
 
 
     $("#new_lore_button").click(function() {
@@ -563,7 +596,10 @@ var f3 = Fragment_Core.createFragment( "description", "Cul'ther"
                             , ["Cul'ther", "Race"])
 
 
-Fragment_Core.createLore("test lore 1", [f3, f1, f2], ["everything"])
+var l1 = Fragment_Core.createLore("test lore 1", [f3, f1, f2], ["everything"])
+Fragment_Core.fragments[f1].lore.push(l1);
+Fragment_Core.fragments[f2].lore.push(l1);
+Fragment_Core.fragments[f3].lore.push(l1);
 
 //setup
 $("#fragment_list-tree").jstree({
