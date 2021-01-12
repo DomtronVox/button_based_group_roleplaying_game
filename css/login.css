@@ -1,0 +1,19 @@
+#LoginBox {
+  margin-right:auto;
+  margin-left:auto;
+  border: 2px;
+  border-style: solid;
+  padding: 8px;
+  width:300px;
+}
+
+#LoginBox ul {
+  margin:auto;
+
+  width: 240px;
+  list-style: none;
+}
+
+#LoginBox li {
+  margin-top: 10px;
+}
